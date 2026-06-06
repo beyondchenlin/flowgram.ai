@@ -9,8 +9,9 @@
 - LLM节点
 - 条件节点
 - 循环节点
+- 调试输出节点
 
-> 后续会支持代码节点、意图识别节点、批处理节点、终止循环节点、继续循环节点、HTTP节点
+> 后续会支持意图识别节点和批处理节点
 
 ## 节点概述
 
@@ -345,6 +346,56 @@ Loop节点用于对数组中的每个元素执行相同的操作，实现工作�
 ```
 
 在这个例子中，循环节点对Start节点的items输出（假设是一个数组）进行迭代，对每个元素调用一个LLM节点。在循环体内，可以通过`loop_0_locals.item`引用当前迭代的元素，循环输出可引用LLM节点输出作为循环节点的输出。
+
+### 调试输出节点 `Debug Output`
+
+#### 功能
+
+Debug Output 节点是 FlowGram Runtime 的内置节点，用于在工作流执行过程中观察已经解析的值。它会将所有输入原样透传为输出，因此下游节点可以继续使用这些值，同时运行时快照会记录实际观察到的输入和输出。
+
+#### 配置选项
+
+| 选项 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| inputs | JSONSchema | 是 | 定义需要观察的值结构 |
+| inputsValues | `Record<string, ValueSchema>` | 是 | 定义每个观察值的来源 |
+| outputs | JSONSchema | 是 | 定义透传输出结构 |
+
+#### 使用示例
+
+```json
+{
+  "id": "debug_output_0",
+  "type": "debug-output",
+  "data": {
+    "title": "Debug Output",
+    "inputsValues": {
+      "prompt": {
+        "type": "ref",
+        "content": ["start_0", "prompt"]
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+```
+
+构建强类型工作流 schema 或 UI 集成时，可以从 `@flowgram.ai/runtime-interface` 导入 `FlowGramNode.DebugOutput`、`DebugOutputNodeSchema` 和 `DebugOutputNodeData`。
 
 ## 如何新增自定义节点
 

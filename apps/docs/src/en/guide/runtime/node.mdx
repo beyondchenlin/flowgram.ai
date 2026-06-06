@@ -9,8 +9,9 @@ Existing Nodes:
 - LLM Node
 - Condition Node
 - Loop Node
+- Debug Output Node
 
-> Future support will include Code, Intent, Batch, Break, Continue, and HTTP nodes
+> Future support will include Intent and Batch nodes
 
 ## Node Overview
 
@@ -345,6 +346,56 @@ The Loop node is used to perform the same operation on each element in an array,
 ```
 
 In this example, the loop node iterates over the items output of the Start node (assuming it's an array), calling an LLM node for each element. Within the loop body, the current iteration element can be referenced via `loop_0_locals.item`, and the LLM node's result is referenced as Loop node's output.
+
+### Debug Output Node
+
+#### Functionality
+
+The Debug Output node is a built-in runtime node for inspecting resolved values during workflow execution. It passes every resolved input through unchanged as an output, so downstream nodes can keep using the same values while runtime snapshots show what was observed.
+
+#### Configuration Options
+
+| Option | Type | Required | Description |
+|------|------|------|------|
+| inputs | JSONSchema | Yes | Defines the values to observe |
+| inputsValues | `Record<string, ValueSchema>` | Yes | Defines where each observed value comes from |
+| outputs | JSONSchema | Yes | Defines the pass-through output shape |
+
+#### Usage Example
+
+```json
+{
+  "id": "debug_output_0",
+  "type": "debug-output",
+  "data": {
+    "title": "Debug Output",
+    "inputsValues": {
+      "prompt": {
+        "type": "ref",
+        "content": ["start_0", "prompt"]
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+```
+
+Import `FlowGramNode.DebugOutput`, `DebugOutputNodeSchema`, and `DebugOutputNodeData` from `@flowgram.ai/runtime-interface` when building typed workflow schemas or UI integrations.
 
 ## How to Add Custom Nodes
 

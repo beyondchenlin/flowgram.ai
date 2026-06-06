@@ -179,3 +179,38 @@ function App() {
     </FixedLayoutEditorProvider>
   )
 }
+```
+
+## Versioned Save Helper
+
+`saveWorkflowDocument` and `loadWorkflowDocument` are exported from `@flowgram.ai/fixed-layout-editor` for product integrations that need a stable document snapshot contract.
+
+```tsx pure
+import {
+  createBrowserStorageAdapter,
+  loadWorkflowDocument,
+  saveWorkflowDocument,
+} from '@flowgram.ai/fixed-layout-editor';
+
+const storage = createBrowserStorageAdapter();
+const storageKey = 'my-app.workflow';
+
+const initialData = loadWorkflowDocument(storage, storageKey, fallbackData);
+
+await saveWorkflowDocument({
+  document: ctx.document,
+  storage,
+  storageKey,
+});
+```
+
+Committed saves validate all node forms and keep the previous snapshot when validation errors exist. For draft auto-save, opt in explicitly:
+
+```tsx pure
+await saveWorkflowDocument({
+  document: ctx.document,
+  storage,
+  storageKey,
+  validate: false,
+});
+```

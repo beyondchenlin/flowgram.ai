@@ -187,3 +187,37 @@ function App() {
 }
 
 ```
+
+## 版本化保存工具
+
+`saveWorkflowDocument` 和 `loadWorkflowDocument` 从 `@flowgram.ai/fixed-layout-editor` 导出，适合需要稳定文档快照契约的正式业务集成。
+
+```tsx pure
+import {
+  createBrowserStorageAdapter,
+  loadWorkflowDocument,
+  saveWorkflowDocument,
+} from '@flowgram.ai/fixed-layout-editor';
+
+const storage = createBrowserStorageAdapter();
+const storageKey = 'my-app.workflow';
+
+const initialData = loadWorkflowDocument(storage, storageKey, fallbackData);
+
+await saveWorkflowDocument({
+  document: ctx.document,
+  storage,
+  storageKey,
+});
+```
+
+正式保存会校验所有节点表单；存在校验错误时，会保留上一份快照。草稿自动保存需要显式关闭校验：
+
+```tsx pure
+await saveWorkflowDocument({
+  document: ctx.document,
+  storage,
+  storageKey,
+  validate: false,
+});
+```
