@@ -5,7 +5,7 @@
 
 import { cloneCanvasData } from './utils/canvas-document-data';
 import { FlowDocumentJSON } from './typings';
-import { createLLMDefaultData } from './nodes/llm/defaults';
+import { createLLMDefaultData, createLLMInputSchema } from './nodes/llm/defaults';
 import { t } from './i18n';
 
 export const initialData: FlowDocumentJSON = {
@@ -221,36 +221,7 @@ export const initialData: FlowDocumentJSON = {
           data: {
             title: t('LLM_{{index}}', { index: 3 }),
             ...createLLMDefaultData(),
-            inputs: {
-              type: 'object',
-              required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
-              properties: {
-                modelName: {
-                  type: 'string',
-                },
-                apiKey: {
-                  type: 'string',
-                },
-                apiHost: {
-                  type: 'string',
-                },
-                temperature: {
-                  type: 'number',
-                },
-                systemPrompt: {
-                  type: 'string',
-                  extra: {
-                    formComponent: 'prompt-editor',
-                  },
-                },
-                prompt: {
-                  type: 'string',
-                  extra: {
-                    formComponent: 'prompt-editor',
-                  },
-                },
-              },
-            },
+            inputs: createLLMInputSchema(),
             outputs: {
               type: 'object',
               properties: {
@@ -273,36 +244,7 @@ export const initialData: FlowDocumentJSON = {
           data: {
             title: t('LLM_{{index}}', { index: 4 }),
             ...createLLMDefaultData(),
-            inputs: {
-              type: 'object',
-              required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
-              properties: {
-                modelName: {
-                  type: 'string',
-                },
-                apiKey: {
-                  type: 'string',
-                },
-                apiHost: {
-                  type: 'string',
-                },
-                temperature: {
-                  type: 'number',
-                },
-                systemPrompt: {
-                  type: 'string',
-                  extra: {
-                    formComponent: 'prompt-editor',
-                  },
-                },
-                prompt: {
-                  type: 'string',
-                  extra: {
-                    formComponent: 'prompt-editor',
-                  },
-                },
-              },
-            },
+            inputs: createLLMInputSchema(),
             outputs: {
               type: 'object',
               properties: {
@@ -379,36 +321,7 @@ export const initialData: FlowDocumentJSON = {
         ...createLLMDefaultData({
           prompt: '# User Input\nquery:{{start_0.query}}\nenable:{{start_0.enable}}',
         }),
-        inputs: {
-          type: 'object',
-          required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
-          properties: {
-            modelName: {
-              type: 'string',
-            },
-            apiKey: {
-              type: 'string',
-            },
-            apiHost: {
-              type: 'string',
-            },
-            temperature: {
-              type: 'number',
-            },
-            systemPrompt: {
-              type: 'string',
-              extra: {
-                formComponent: 'prompt-editor',
-              },
-            },
-            prompt: {
-              type: 'string',
-              extra: {
-                formComponent: 'prompt-editor',
-              },
-            },
-          },
-        },
+        inputs: createLLMInputSchema(),
         outputs: {
           type: 'object',
           properties: {
@@ -433,36 +346,7 @@ export const initialData: FlowDocumentJSON = {
         ...createLLMDefaultData({
           prompt: '# LLM Input\nresult:{{llm_8--A3.result}}',
         }),
-        inputs: {
-          type: 'object',
-          required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
-          properties: {
-            modelName: {
-              type: 'string',
-            },
-            apiKey: {
-              type: 'string',
-            },
-            apiHost: {
-              type: 'string',
-            },
-            temperature: {
-              type: 'number',
-            },
-            systemPrompt: {
-              type: 'string',
-              extra: {
-                formComponent: 'prompt-editor',
-              },
-            },
-            prompt: {
-              type: 'string',
-              extra: {
-                formComponent: 'prompt-editor',
-              },
-            },
-          },
-        },
+        inputs: createLLMInputSchema(),
         outputs: {
           type: 'object',
           properties: {

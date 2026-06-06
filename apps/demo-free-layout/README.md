@@ -14,13 +14,22 @@ The demo LLM node can be pointed at an OpenAI-compatible local service through
 `apps/demo-free-layout/.env.local`:
 
 ```shell
-FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
+FLOWGRAM_DEMO_LLM_MODEL_NAME=deepseek-chat
 FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777/v1
 FLOWGRAM_DEMO_LLM_API_KEY=sk-...
+FLOWGRAM_DEMO_LLM_TEMPERATURE=0.2
+FLOWGRAM_DEMO_LLM_SYSTEM_PROMPT=You are a concise AI assistant. Keep answers short.
+FLOWGRAM_DEMO_LLM_MAX_TOKENS=128
+FLOWGRAM_DEMO_LLM_TIMEOUT=60000
+FLOWGRAM_DEMO_LLM_MAX_RETRIES=0
+FLOWGRAM_DEMO_LLM_ENABLE_THINKING=false
 ```
 
 `.env.local` is ignored by git. Do not commit real API keys; values injected into this browser demo
 are visible to anyone who can access the served page.
+
+Restart the dev server after changing `.env.local`. Saved demo documents keep user-edited LLM
+connection settings, while managed default values are migrated to the current local configuration.
 
 ## Project Overview
 
