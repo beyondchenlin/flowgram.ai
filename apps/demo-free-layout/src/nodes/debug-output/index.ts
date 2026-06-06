@@ -4,6 +4,7 @@
  */
 
 import { nanoid } from 'nanoid';
+import { type DebugOutputNodeData } from '@flowgram.ai/runtime-interface';
 import { WorkflowPortEntity } from '@flowgram.ai/free-layout-editor';
 import { IFlowValue } from '@flowgram.ai/form-materials';
 
@@ -16,24 +17,26 @@ import { formMeta } from './form-meta';
 
 let index = 0;
 
-const createEmptyObjectSchema = (): JsonSchema => ({
+type DebugOutputObjectSchema = DebugOutputNodeData['inputs'];
+
+const createEmptyObjectSchema = (): DebugOutputObjectSchema => ({
   type: 'object',
   properties: {},
 });
 
-const cloneSchema = (schema: JsonSchema): JsonSchema => JSON.parse(JSON.stringify(schema));
+const cloneSchema = <T>(schema: T): T => JSON.parse(JSON.stringify(schema)) as T;
 
-const getSourceOutputsSchema = (fromPort?: WorkflowPortEntity): JsonSchema => {
+const getSourceOutputsSchema = (fromPort?: WorkflowPortEntity): DebugOutputObjectSchema => {
   const outputs = fromPort?.node.form?.getValueIn<JsonSchema>('outputs');
   if (outputs?.type === 'object' && outputs.properties) {
-    return cloneSchema(outputs);
+    return cloneSchema(outputs) as DebugOutputObjectSchema;
   }
   return createEmptyObjectSchema();
 };
 
 const createInputsValuesFromOutputs = (
   sourceNodeID: string | undefined,
-  outputs: JsonSchema
+  outputs: DebugOutputObjectSchema
 ): Record<string, IFlowValue> => {
   if (!sourceNodeID || outputs.type !== 'object' || !outputs.properties) {
     return {};
@@ -74,7 +77,7 @@ export const DebugOutputNodeRegistry: FlowNodeRegistry = {
         inputsValues: createInputsValuesFromOutputs(addContext?.fromPort?.node.id, outputs),
         inputs: cloneSchema(outputs),
         outputs,
-      },
+      } satisfies DebugOutputNodeData,
     };
   },
   formMeta,

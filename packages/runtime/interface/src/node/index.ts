@@ -6,7 +6,7 @@
 export { FlowGramNode } from './constant';
 export { EndNodeSchema } from './end';
 export { LLMNodeSchema } from './llm';
-export type { DebugOutputNodeSchema } from './debug-output';
+export type { DebugOutputNodeData, DebugOutputNodeSchema } from './debug-output';
 export { StartNodeSchema } from './start';
 export { LoopNodeSchema } from './loop';
 export { ConditionNodeSchema, ConditionOperator, ConditionItem } from './condition';

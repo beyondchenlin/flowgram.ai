@@ -8,7 +8,7 @@ import { WorkflowNodeSchema } from '@schema/node';
 import { IJsonSchema } from '@schema/json-schema';
 import { FlowGramNode } from '@node/constant';
 
-interface DebugOutputNodeData {
+export interface DebugOutputNodeData {
   title: string;
   inputs: IJsonSchema<'object'>;
   inputsValues: Record<string, IFlowValue>;
