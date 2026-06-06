@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+  createBrowserStorageAdapter,
   loadWorkflowDocument,
   saveWorkflowDocument,
 } from './workflow-document-persistence';
@@ -41,6 +42,7 @@ function createDocument<T>(data: T, invalid = false) {
 describe('workflow document persistence', () => {
   afterEach(() => {
     vi.useRealTimers();
+    window.localStorage.clear();
   });
 
   it('saves a versioned document snapshot after validating all node forms', async () => {
@@ -129,7 +131,7 @@ describe('workflow document persistence', () => {
     });
   });
 
-  it('saves the document snapshot and reports validation errors by default', async () => {
+  it('blocks persistence by default when validation errors exist', async () => {
     const storage = new MemoryStorage();
     storage.setData('demo.document', {
       schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
@@ -142,34 +144,34 @@ describe('workflow document persistence', () => {
       document,
       storage,
       storageKey: 'demo.document',
+    });
+
+    expect(result).toEqual({ saved: false, errorCount: 1 });
+    expect(loadWorkflowDocument(storage, 'demo.document', { nodes: [] })).toEqual({
+      nodes: [{ id: 'previous' }],
+    });
+  });
+
+  it('can persist a draft with validation errors when explicitly allowed', async () => {
+    const storage = new MemoryStorage();
+    storage.setData('demo.document', {
+      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+      updatedAt: '2026-06-06T06:00:00.000Z',
+      data: { nodes: [{ id: 'previous' }] },
+    });
+    const { document } = createDocument({ nodes: [{ id: 'invalid' }] }, true);
+
+    const result = await saveWorkflowDocument({
+      document,
+      storage,
+      storageKey: 'demo.document',
+      blockOnValidationErrors: false,
     });
 
     expect(result.saved).toBe(true);
     expect(result.errorCount).toBe(1);
     expect(loadWorkflowDocument(storage, 'demo.document', { nodes: [] })).toEqual({
       nodes: [{ id: 'invalid' }],
-    });
-  });
-
-  it('can block persistence when validation errors are not allowed', async () => {
-    const storage = new MemoryStorage();
-    storage.setData('demo.document', {
-      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
-      updatedAt: '2026-06-06T06:00:00.000Z',
-      data: { nodes: [{ id: 'previous' }] },
-    });
-    const { document } = createDocument({ nodes: [{ id: 'invalid' }] }, true);
-
-    const result = await saveWorkflowDocument({
-      document,
-      storage,
-      storageKey: 'demo.document',
-      blockOnValidationErrors: true,
-    });
-
-    expect(result).toEqual({ saved: false, errorCount: 1 });
-    expect(loadWorkflowDocument(storage, 'demo.document', { nodes: [] })).toEqual({
-      nodes: [{ id: 'previous' }],
     });
   });
 
@@ -185,5 +187,26 @@ describe('workflow document persistence', () => {
       data: { nodes: [{ id: 'old-version' }] },
     });
     expect(loadWorkflowDocument(storage, 'demo.document', initialData)).toBe(initialData);
+  });
+
+  it('uses a FlowGram scoped key for browser storage by default', () => {
+    const storage = createBrowserStorageAdapter();
+
+    storage.setData('demo.document', { nodes: [{ id: 'start_0' }] });
+
+    expect(window.localStorage.getItem('flowgram:demo.document')).toBe(
+      JSON.stringify({ nodes: [{ id: 'start_0' }] })
+    );
+  });
+
+  it('reads legacy browser storage keys during prefix migration', () => {
+    window.localStorage.setItem(
+      '__gedit:demo.document',
+      JSON.stringify({ nodes: [{ id: 'legacy' }] })
+    );
+
+    const storage = createBrowserStorageAdapter();
+
+    expect(storage.getData('demo.document')).toEqual({ nodes: [{ id: 'legacy' }] });
   });
 });

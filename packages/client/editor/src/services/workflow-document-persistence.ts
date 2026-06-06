@@ -5,7 +5,8 @@
 
 export const WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION = 1;
 
-const DEFAULT_STORAGE_PREFIX = '__gedit:';
+const DEFAULT_STORAGE_PREFIX = 'flowgram:';
+const LEGACY_DEFAULT_STORAGE_PREFIXES = ['__gedit:'];
 
 export interface WorkflowDocumentPersistenceStorage {
   setData<T>(key: string, data: T): void;
@@ -48,7 +49,13 @@ export type WorkflowDocumentSaveResult<T> =
     };
 
 export interface WorkflowDocumentSaveOptions {
+  /**
+   * Validate every node form before persisting. Disable this for draft auto-save flows.
+   */
   validate?: boolean;
+  /**
+   * Keep the previous snapshot when validation errors exist. Defaults to true for committed saves.
+   */
   blockOnValidationErrors?: boolean;
 }
 
@@ -78,7 +85,7 @@ export async function saveWorkflowDocument<T>({
   storageKey,
   getData,
   validate = true,
-  blockOnValidationErrors = false,
+  blockOnValidationErrors = true,
 }: SaveWorkflowDocumentOptions<T>): Promise<WorkflowDocumentSaveResult<T>> {
   const errorCount = validate ? await validateWorkflowDocumentForms(document) : 0;
   if (blockOnValidationErrors && errorCount > 0) {
@@ -122,13 +129,20 @@ export function loadWorkflowDocument<T>(
 export function createBrowserStorageAdapter(
   prefix = DEFAULT_STORAGE_PREFIX
 ): WorkflowDocumentPersistenceStorage {
+  const readPrefixes =
+    prefix === DEFAULT_STORAGE_PREFIX
+      ? [DEFAULT_STORAGE_PREFIX, ...LEGACY_DEFAULT_STORAGE_PREFIXES]
+      : [prefix];
+
   return {
     setData<T>(key: string, data: T): void {
       window.localStorage.setItem(`${prefix}${key}`, JSON.stringify(data));
     },
     getData<T>(key: string, defaultValue?: T): T {
-      const rawData = window.localStorage.getItem(`${prefix}${key}`);
-      if (rawData === null) {
+      const rawData = readPrefixes
+        .map((readPrefix) => window.localStorage.getItem(`${readPrefix}${key}`))
+        .find((item): item is string => item !== null);
+      if (rawData === undefined) {
         return defaultValue as T;
       }
       return JSON.parse(rawData) as T;
