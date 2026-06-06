@@ -11,6 +11,7 @@ import {
 } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeRegistries } from '../nodes';
+import { getNodePanelLabelKey, t } from '../i18n';
 
 const NodeWrap = styled.div`
   width: 100%;
@@ -32,9 +33,16 @@ const NodeLabel = styled.div`
   margin-left: 10px;
 `;
 
-function Node(props: { label: string; icon: JSX.Element; onClick: () => void; disabled: boolean }) {
+function Node(props: {
+  label: string;
+  icon: JSX.Element;
+  onClick: () => void;
+  disabled: boolean;
+  nodeType: string;
+}) {
   return (
     <NodeWrap
+      data-testid={`demo-fixed-node-list-${props.nodeType}`}
       onClick={props.disabled ? undefined : props.onClick}
       style={props.disabled ? { opacity: 0.3 } : {}}
     >
@@ -65,7 +73,8 @@ export function NodeList(props: { onSelect: (meta: any) => void; from: FlowNodeE
           key={registry.type}
           disabled={!(registry.canAdd?.(context, props.from) ?? true)}
           icon={<img style={{ width: 10, height: 10, borderRadius: 4 }} src={registry.info.icon} />}
-          label={registry.type as string}
+          label={t(getNodePanelLabelKey(registry.type as string))}
+          nodeType={registry.type as string}
           onClick={() => handleClick(registry)}
         />
       ))}

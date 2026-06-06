@@ -19,4 +19,9 @@ export const demoI18nOptions = {
 
 export const t = (key: string, options?: Record<string, unknown>): string => I18n.t(key, options);
 
-export { demoI18nLanguages, getDemoLocale, normalizeDemoLocale } from './demo-languages';
+export {
+  demoI18nLanguages,
+  getDemoLocale,
+  getNodePanelLabelKey,
+  normalizeDemoLocale,
+} from './demo-languages';

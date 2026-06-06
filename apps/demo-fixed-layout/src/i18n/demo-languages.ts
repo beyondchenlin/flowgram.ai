@@ -120,6 +120,23 @@ const enUSContents = Object.fromEntries(
   Object.keys(zhCNContents).map((key) => [key, key])
 ) as Record<keyof typeof zhCNContents, string>;
 
+const nodePanelLabelKeys: Record<string, keyof typeof zhCNContents> = {
+  start: 'Start',
+  end: 'End',
+  switch: 'Switch',
+  llm: 'LLM',
+  loop: 'Loop',
+  tryCatch: 'TryCatch',
+  if: 'If',
+  breakLoop: 'BreakLoop',
+  agent: 'Agent',
+  tool: 'Tool',
+};
+
+export function getNodePanelLabelKey(nodeType: string): string {
+  return nodePanelLabelKeys[nodeType] ?? nodeType;
+}
+
 export const demoI18nLanguages = {
   'en-US': enUSContents,
   'zh-CN': zhCNContents,
