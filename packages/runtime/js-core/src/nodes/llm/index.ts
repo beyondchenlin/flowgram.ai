@@ -20,6 +20,10 @@ export interface LLMExecutorInputs {
   temperature: number;
   systemPrompt?: string;
   prompt: string;
+  maxTokens?: number;
+  timeout?: number;
+  maxRetries?: number;
+  enableThinking?: boolean;
 }
 
 export class LLMExecutor implements INodeExecutor {
@@ -29,7 +33,17 @@ export class LLMExecutor implements INodeExecutor {
     const inputs = context.inputs as LLMExecutorInputs;
     this.checkInputs(inputs);
 
-    const { modelName, temperature, apiKey, apiHost, systemPrompt, prompt } = inputs;
+    const {
+      modelName,
+      temperature,
+      apiKey,
+      apiHost,
+      systemPrompt,
+      prompt,
+      maxTokens,
+      timeout,
+      maxRetries,
+    } = inputs;
 
     const model = new ChatOpenAI({
       modelName,
@@ -38,7 +52,10 @@ export class LLMExecutor implements INodeExecutor {
       configuration: {
         baseURL: apiHost,
       },
-      maxRetries: 3,
+      maxRetries: maxRetries ?? 3,
+      ...(maxTokens !== undefined ? { maxTokens } : {}),
+      ...(timeout !== undefined ? { timeout } : {}),
+      ...this.createProviderOptions(inputs),
     });
 
     const messages: BaseMessageLike[] = [];
@@ -83,6 +100,12 @@ export class LLMExecutor implements INodeExecutor {
     }
 
     this.checkApiHost(apiHost);
+    this.checkOptionalPositiveInteger(inputs.maxTokens, 'maxTokens');
+    this.checkOptionalPositiveInteger(inputs.timeout, 'timeout');
+    this.checkOptionalNonNegativeInteger(inputs.maxRetries, 'maxRetries');
+    if (inputs.enableThinking !== undefined && typeof inputs.enableThinking !== 'boolean') {
+      throw new Error(`Invalid LLM input "enableThinking": expected boolean`);
+    }
   }
 
   private checkApiHost(apiHost: string): void {
@@ -93,6 +116,40 @@ export class LLMExecutor implements INodeExecutor {
     const url = new URL(apiHost);
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       throw new Error(`Invalid API host protocol - ${url.protocol}`);
+    }
+  }
+
+  private createProviderOptions(inputs: LLMExecutorInputs): {
+    modelKwargs?: Record<string, boolean>;
+  } {
+    if (inputs.enableThinking === undefined) {
+      return {};
+    }
+
+    return {
+      modelKwargs: {
+        enable_thinking: inputs.enableThinking,
+      },
+    };
+  }
+
+  private checkOptionalPositiveInteger(value: number | undefined, name: string): void {
+    if (value === undefined) {
+      return;
+    }
+
+    if (!Number.isInteger(value) || value <= 0) {
+      throw new Error(`Invalid LLM input "${name}": expected a positive integer`);
+    }
+  }
+
+  private checkOptionalNonNegativeInteger(value: number | undefined, name: string): void {
+    if (value === undefined) {
+      return;
+    }
+
+    if (!Number.isInteger(value) || value < 0) {
+      throw new Error(`Invalid LLM input "${name}": expected a non-negative integer`);
     }
   }
 }

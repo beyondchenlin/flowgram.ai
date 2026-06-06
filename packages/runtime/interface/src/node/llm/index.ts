@@ -19,6 +19,10 @@ interface LLMNodeData {
     temperature: IFlowConstantRefValue;
     systemPrompt: IFlowConstantValue | IFlowTemplateValue;
     prompt: IFlowConstantValue | IFlowTemplateValue;
+    maxTokens?: IFlowConstantRefValue;
+    timeout?: IFlowConstantRefValue;
+    maxRetries?: IFlowConstantRefValue;
+    enableThinking?: IFlowConstantRefValue;
   };
 }
 

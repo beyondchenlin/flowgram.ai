@@ -13,12 +13,20 @@ npx @flowgram.ai/create-app@latest free-layout
 demo 的大模型节点可以通过 `apps/demo-free-layout/.env.local` 指向 OpenAI 兼容的本地服务：
 
 ```shell
-FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
+FLOWGRAM_DEMO_LLM_MODEL_NAME=deepseek-chat
 FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777/v1
 FLOWGRAM_DEMO_LLM_API_KEY=sk-...
+FLOWGRAM_DEMO_LLM_TEMPERATURE=0.2
+FLOWGRAM_DEMO_LLM_SYSTEM_PROMPT=你是简洁的大模型助手，回答保持简短。
+FLOWGRAM_DEMO_LLM_MAX_TOKENS=128
+FLOWGRAM_DEMO_LLM_TIMEOUT=60000
+FLOWGRAM_DEMO_LLM_MAX_RETRIES=0
+FLOWGRAM_DEMO_LLM_ENABLE_THINKING=false
 ```
 
 `.env.local` 已被 git 忽略。不要提交真实 API key；注入到这个浏览器 demo 的值会对能够访问页面的人可见。
+
+修改 `.env.local` 后需要重启 dev server。已保存的 demo 画布会保留用户手动改过的大模型连接参数，同时把仍处于 managed default 状态的值迁移到当前本地配置。
 
 ## 项目概览
 
