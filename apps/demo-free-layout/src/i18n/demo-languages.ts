@@ -144,6 +144,7 @@ const zhCNContents = {
   'Zoom to 150%': '缩放到 150%',
   'Zoom to 200%': '缩放到 200%',
   'Download {{format}} successfully': '{{format}} 下载成功',
+  'Import {{file}} successfully': '{{file}} 导入成功',
   'Never Remind': '不再提示',
   'Hold {{key}} to drag node out': '按住 {{key}} 可将节点拖出分组',
   modelName: '模型名称',
