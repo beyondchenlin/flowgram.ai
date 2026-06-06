@@ -16,6 +16,7 @@ import {
 import { canContainNode } from '../../utils';
 import { FlowNodeRegistry } from '../../typings';
 import { nodeRegistries } from '../../nodes';
+import { getNodePanelLabelKey, t } from '../../i18n';
 
 const NodeWrap = styled.div`
   width: 100%;
@@ -42,12 +43,13 @@ interface NodeProps {
   icon: JSX.Element;
   onClick: React.MouseEventHandler<HTMLDivElement>;
   disabled: boolean;
+  nodeType: string;
 }
 
 function Node(props: NodeProps) {
   return (
     <NodeWrap
-      data-testid={`demo-free-node-list-${props.label}`}
+      data-testid={`demo-free-node-list-${props.nodeType}`}
       onClick={props.disabled ? undefined : props.onClick}
       style={props.disabled ? { opacity: 0.3 } : {}}
     >
@@ -100,17 +102,21 @@ export const NodeList: FC<NodeListProps> = (props) => {
           }
           return true;
         })
-        .map((registry) => (
-          <Node
-            key={registry.type}
-            disabled={!(registry.canAdd?.(context) ?? true)}
-            icon={
-              <img style={{ width: 10, height: 10, borderRadius: 4 }} src={registry.info?.icon} />
-            }
-            label={registry.type as string}
-            onClick={(e) => handleClick(e, registry)}
-          />
-        ))}
+        .map((registry) => {
+          const nodeType = registry.type as string;
+          return (
+            <Node
+              key={nodeType}
+              disabled={!(registry.canAdd?.(context) ?? true)}
+              icon={
+                <img style={{ width: 10, height: 10, borderRadius: 4 }} src={registry.info?.icon} />
+              }
+              label={t(getNodePanelLabelKey(nodeType))}
+              nodeType={nodeType}
+              onClick={(e) => handleClick(e, registry)}
+            />
+          );
+        })}
     </NodesWrap>
   );
 };

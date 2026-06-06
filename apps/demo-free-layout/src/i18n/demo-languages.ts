@@ -12,6 +12,13 @@ const zhCNContents = {
   End: '结束',
   Condition: '条件判断',
   LLM: '大模型',
+  'HTTP Request': 'HTTP 请求',
+  Loop: '循环',
+  Code: '代码',
+  Variable: '变量',
+  Break: '中断',
+  Continue: '继续',
+  'Multi Condition': '多条件',
   'HTTP Request_{{index}}': 'HTTP 请求_{{index}}',
   'Loop_{{index}}': '循环_{{index}}',
   'LLM_{{index}}': '大模型_{{index}}',
@@ -157,6 +164,26 @@ const zhCNContents = {
 const enUSContents = Object.fromEntries(
   Object.keys(zhCNContents).map((key) => [key, key])
 ) as Record<keyof typeof zhCNContents, string>;
+
+const nodePanelLabelKeys: Record<string, keyof typeof zhCNContents> = {
+  start: 'Start',
+  end: 'End',
+  condition: 'Condition',
+  llm: 'LLM',
+  http: 'HTTP Request',
+  loop: 'Loop',
+  code: 'Code',
+  variable: 'Variable',
+  break: 'Break',
+  continue: 'Continue',
+  group: 'Group',
+  comment: 'Comment',
+  'multi-condition': 'Multi Condition',
+};
+
+export function getNodePanelLabelKey(nodeType: string): string {
+  return nodePanelLabelKeys[nodeType] ?? nodeType;
+}
 
 export const demoI18nLanguages = {
   'en-US': enUSContents,

@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEMO_DEFAULT_LOCALE,
   demoI18nLanguages,
+  getNodePanelLabelKey,
   normalizeDemoLocale,
 } from '../src/i18n/demo-languages';
 
@@ -26,5 +27,15 @@ describe('demo free layout i18n languages', () => {
     expect(demoI18nLanguages['zh-CN'].Start).toBe('开始');
     expect(demoI18nLanguages['zh-CN'].LLM).toBe('大模型');
     expect(demoI18nLanguages['zh-CN']['Title is required']).toBe('标题不能为空');
+  });
+
+  it('maps right-click node panel types to translated display labels', () => {
+    expect(getNodePanelLabelKey('condition')).toBe('Condition');
+    expect(getNodePanelLabelKey('llm')).toBe('LLM');
+    expect(getNodePanelLabelKey('loop')).toBe('Loop');
+    expect(getNodePanelLabelKey('http')).toBe('HTTP Request');
+    expect(getNodePanelLabelKey('multi-condition')).toBe('Multi Condition');
+    expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('condition')]).toBe('条件判断');
+    expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('multi-condition')]).toBe('多条件');
   });
 });
