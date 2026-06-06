@@ -46,6 +46,79 @@ npm start
 
 3. 在浏览器中打开 [http://localhost:3000](http://localhost:3000)。
 
+## 🖥️ 本地部署完整中文文档站（局域网访问）
+
+如果需要一个完整入口来查看 FlowGram 的中文文档、自由布局、固定布局、物料和 API，请部署 `apps/docs` 文档站，而不是单独部署 `apps/demo-free-layout`。单个 demo 只展示某一种布局，且部分节点文案是英文示例数据。
+
+1. 使用符合仓库要求的 Node.js 版本：
+
+```sh
+cd /Users/wangyanxiang/Documents/code/flowgram
+source ~/.nvm/nvm.sh
+nvm use 22.19.0
+```
+
+2. 安装依赖并构建文档站相关包：
+
+```sh
+node common/scripts/install-run-rush.js install
+node common/scripts/install-run-rush.js build --to @flowgram.ai/docs
+```
+
+3. 生成生产版中文文档站：
+
+```sh
+cd apps/docs
+node ../../common/scripts/install-run-rushx.js build
+```
+
+4. 使用 PM2 在后台长期运行，并监听局域网地址：
+
+```sh
+npm install -g pm2 serve
+
+pm2 delete flowgram-docs 2>/dev/null || true
+pm2 start "$(which serve)" --name flowgram-docs -- \
+  -s /Users/wangyanxiang/Documents/code/flowgram/apps/docs/doc_build \
+  -l tcp://0.0.0.0:3001
+
+pm2 save
+```
+
+5. 查看本机局域网 IP：
+
+```sh
+ipconfig getifaddr en0
+```
+
+如果输出为 `192.168.1.127`，同一局域网设备访问：
+
+```text
+http://192.168.1.127:3001/
+```
+
+常用入口：
+
+- 中文首页：`http://192.168.1.127:3001/`
+- 自由布局示例：`http://192.168.1.127:3001/examples/free-layout/free-feature-overview`
+- 固定布局示例：`http://192.168.1.127:3001/examples/fixed-layout/fixed-feature-overview`
+- 英文文档：`http://192.168.1.127:3001/en/`
+
+常用 PM2 命令：
+
+```sh
+pm2 status
+pm2 logs flowgram-docs
+pm2 restart flowgram-docs
+pm2 stop flowgram-docs
+```
+
+如果 `3001` 被占用，可以先停止占用进程：
+
+```sh
+lsof -tiTCP:3001 -sTCP:LISTEN | xargs kill
+```
+
 ## ✨ 特性
 
 | 特性                                                                                         | 说明                                                                              | 演示                                                                                         |
