@@ -6,7 +6,7 @@ import { PackageManagerTabs } from '@theme';
   npm: "npm install @flowgram.ai/export-plugin"
 }} />
 
-The export plugin provides functionality to export workflows as images (PNG, JPEG, SVG) or data files (JSON, YAML).
+The export plugin provides functionality to export workflows as images (PNG, JPEG, SVG) or data files (JSON, YAML). It also supports dragging FlowGram JSON/YAML workflow files into the canvas to import them.
 
 ## Quick Start
 
@@ -17,10 +17,15 @@ The export plugin provides functionality to export workflows as images (PNG, JPE
 2. Register the plugin
 
 ```tsx pure
-import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
+import { createDownloadPlugin, createImportPlugin } from '@flowgram.ai/export-plugin';
 
 const editorProps = useMemo(() => ({
-  plugins: () => [createDownloadPlugin({})]
+  plugins: () => [
+    createDownloadPlugin({}),
+    createImportPlugin({
+      enableDrop: true,
+    }),
+  ]
 }), []);
 
 return (
@@ -29,6 +34,38 @@ return (
   </FreeLayoutEditorProvider>
 )
 ```
+
+## Drag to Import Workflows
+
+`createImportPlugin` listens to file drag-and-drop events on the canvas DOM by default. Users can drag `.json`, `.yaml`, or `.yml` workflow files into the canvas to import them.
+
+```tsx pure
+import { Toast } from '@douyinfe/semi-ui';
+import { createImportPlugin } from '@flowgram.ai/export-plugin';
+
+createImportPlugin({
+  // Default: true. Set to false if you only want manual imports through FlowImportService.
+  enableDrop: true,
+
+  // Default: 5 MB
+  maxFileSize: 5 * 1024 * 1024,
+
+  // Default: true
+  fitViewAfterImport: true,
+
+  onImportSuccess: ({ file }) => {
+    Toast.success(`${file?.name ?? 'workflow'} imported`);
+  },
+
+  onImportError: ({ error }) => {
+    Toast.error(error.message);
+  },
+})
+```
+
+:::info
+Import expects FlowGram's own `document.toJSON()` / `FlowDownloadFormat.JSON` / `FlowDownloadFormat.YAML` structure. Third-party workflow formats such as Dify or n8n should be converted to FlowGram JSON before importing.
+:::
 
 ## Options
 
@@ -113,10 +150,36 @@ export const DownloadStatus = () => {
 };
 ```
 
+## Using FlowImportService
+
+If you do not want drag-and-drop, use `FlowImportService` in your component to import a selected file:
+
+```tsx pure
+import { useService } from '@flowgram.ai/free-layout-editor';
+import { FlowImportService } from '@flowgram.ai/export-plugin';
+
+export const ImportButton = () => {
+  const importService = useService(FlowImportService);
+
+  return (
+    <input
+      type="file"
+      accept=".json,.yaml,.yml"
+      onChange={async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        await importService.importFile(file);
+        event.target.value = '';
+      }}
+    />
+  );
+};
+```
+
 ## Type Definitions
 
 ```ts pure
-import { FlowDownloadFormat } from '@flowgram.ai/export-plugin';
+import { FlowDownloadFormat, FlowImportFormat } from '@flowgram.ai/export-plugin';
 
 interface DownloadServiceOptions {
   // Function to customize export filename
@@ -137,5 +200,27 @@ enum FlowDownloadFormat {
   PNG = 'png',
   JPEG = 'jpeg',
   SVG = 'svg',
+}
+
+interface FlowImportServiceOptions {
+  // Enable drag-and-drop import. Default: true
+  enableDrop?: boolean;
+
+  // Maximum file size. Default: 5 MB
+  maxFileSize?: number;
+
+  // Fit view after a successful import. Default: true
+  fitViewAfterImport?: boolean;
+
+  // Called after a successful import
+  onImportSuccess?: (params: WorkflowImportSuccessParams) => void;
+
+  // Called when import fails
+  onImportError?: (params: WorkflowImportErrorParams) => void;
+}
+
+enum FlowImportFormat {
+  JSON = 'json',
+  YAML = 'yaml',
 }
 ```

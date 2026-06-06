@@ -104,6 +104,7 @@ const zhCNContents = {
   Zoomout: '缩小',
   'Copied. You can move to any [+] to paste.': '已复制，可移动到任意 [+] 位置粘贴。',
   'Download {{format}} successfully': '{{format}} 下载成功',
+  'Import {{file}} successfully': '{{file}} 导入成功',
   modelName: '模型名称',
   modelType: '模型类型',
   apiKey: 'API 密钥',

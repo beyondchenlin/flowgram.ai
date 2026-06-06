@@ -20,7 +20,8 @@ import {
   createBrowserStorageAdapter,
   loadWorkflowDocument,
 } from '@flowgram.ai/fixed-layout-editor';
-import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
+import { createDownloadPlugin, createImportPlugin } from '@flowgram.ai/export-plugin';
+import { Toast } from '@douyinfe/semi-ui';
 
 import { type FlowNodeRegistry } from '../typings';
 import { shortcutGetter } from '../shortcuts';
@@ -292,6 +293,18 @@ export function useEditorProps(
          * 下载插件
          */
         createDownloadPlugin({}),
+        /**
+         * Import plugin
+         * 导入插件
+         */
+        createImportPlugin({
+          onImportSuccess: ({ file }) => {
+            Toast.success(t('Import {{file}} successfully', { file: file?.name ?? 'workflow' }));
+          },
+          onImportError: ({ error }) => {
+            Toast.error(error.message);
+          },
+        }),
         /**
          * Group plugin
          * 分组插件

@@ -21,7 +21,8 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 import { createFreeGroupPlugin } from '@flowgram.ai/free-group-plugin';
 import { createContainerNodePlugin } from '@flowgram.ai/free-container-plugin';
-import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
+import { createDownloadPlugin, createImportPlugin } from '@flowgram.ai/export-plugin';
+import { Toast } from '@douyinfe/semi-ui';
 
 import { canContainNode, onDragLineEnd } from '../utils';
 import { FlowNodeRegistry, FlowDocumentJSON } from '../typings';
@@ -37,7 +38,7 @@ import {
 import { applyDemoLLMConfig } from '../nodes/llm/defaults';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
-import { demoI18nOptions } from '../i18n';
+import { demoI18nOptions, t } from '../i18n';
 import { SelectorBoxPopover } from '../components/selector-box-popover';
 import { BaseNode, CommentRender, GroupNodeRender, LineAddButton, NodePanel } from '../components';
 
@@ -341,6 +342,18 @@ export function useEditorProps(
          * 下载插件
          */
         createDownloadPlugin({}),
+        /**
+         * Import plugin
+         * 导入插件
+         */
+        createImportPlugin({
+          onImportSuccess: ({ file }) => {
+            Toast.success(t('Import {{file}} successfully', { file: file?.name ?? 'workflow' }));
+          },
+          onImportError: ({ error }) => {
+            Toast.error(error.message);
+          },
+        }),
         /**
          * Snap plugin
          * 自动对齐及辅助线插件

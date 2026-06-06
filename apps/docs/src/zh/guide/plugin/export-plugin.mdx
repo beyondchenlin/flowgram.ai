@@ -6,7 +6,7 @@ import { PackageManagerTabs } from '@theme';
   npm: "npm install @flowgram.ai/export-plugin"
 }} />
 
-导出插件提供了将工作流导出为图片（PNG、JPEG、SVG）或数据文件（JSON、YAML）的功能。
+导出插件提供了将工作流导出为图片（PNG、JPEG、SVG）或数据文件（JSON、YAML）的功能，也支持将 FlowGram JSON/YAML 工作流文件拖拽导入画布。
 
 ## 快速开始
 
@@ -17,10 +17,15 @@ import { PackageManagerTabs } from '@theme';
 2. 注册插件
 
 ```tsx pure
-import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
+import { createDownloadPlugin, createImportPlugin } from '@flowgram.ai/export-plugin';
 
 const editorProps = useMemo(() => ({
-  plugins: () => [createDownloadPlugin({})]
+  plugins: () => [
+    createDownloadPlugin({}),
+    createImportPlugin({
+      enableDrop: true,
+    }),
+  ]
 }), []);
 
 return (
@@ -29,6 +34,38 @@ return (
   </FreeLayoutEditorProvider>
 )
 ```
+
+## 拖拽导入工作流
+
+`createImportPlugin` 默认监听画布 DOM 的文件拖拽事件。用户可以将 `.json`、`.yaml` 或 `.yml` 工作流文件拖入画布完成导入。
+
+```tsx pure
+import { Toast } from '@douyinfe/semi-ui';
+import { createImportPlugin } from '@flowgram.ai/export-plugin';
+
+createImportPlugin({
+  // 默认 true。设为 false 后仍可通过 FlowImportService 手动导入。
+  enableDrop: true,
+
+  // 默认 5 MB
+  maxFileSize: 5 * 1024 * 1024,
+
+  // 默认 true，导入成功后自动 fit view
+  fitViewAfterImport: true,
+
+  onImportSuccess: ({ file }) => {
+    Toast.success(`${file?.name ?? 'workflow'} 导入成功`);
+  },
+
+  onImportError: ({ error }) => {
+    Toast.error(error.message);
+  },
+})
+```
+
+:::info
+导入能力面向 FlowGram 自身的 `document.toJSON()` / `FlowDownloadFormat.JSON` / `FlowDownloadFormat.YAML` 数据结构。Dify、n8n 等第三方工作流格式需要先经过独立转换器转换为 FlowGram JSON。
+:::
 
 ## 配置项
 
@@ -113,10 +150,36 @@ export const DownloadStatus = () => {
 };
 ```
 
+## 使用 FlowImportService
+
+如果不想使用拖拽，也可以在组件中通过 `FlowImportService` 主动导入文件：
+
+```tsx pure
+import { useService } from '@flowgram.ai/free-layout-editor';
+import { FlowImportService } from '@flowgram.ai/export-plugin';
+
+export const ImportButton = () => {
+  const importService = useService(FlowImportService);
+
+  return (
+    <input
+      type="file"
+      accept=".json,.yaml,.yml"
+      onChange={async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        await importService.importFile(file);
+        event.target.value = '';
+      }}
+    />
+  );
+};
+```
+
 ## 类型定义
 
 ```ts pure
-import { FlowDownloadFormat } from '@flowgram.ai/export-plugin';
+import { FlowDownloadFormat, FlowImportFormat } from '@flowgram.ai/export-plugin';
 
 interface DownloadServiceOptions {
   // 自定义导出文件名的函数
@@ -137,5 +200,27 @@ enum FlowDownloadFormat {
   PNG = 'png',
   JPEG = 'jpeg',
   SVG = 'svg',
+}
+
+interface FlowImportServiceOptions {
+  // 是否启用拖拽导入，默认 true
+  enableDrop?: boolean;
+
+  // 最大文件体积，默认 5 MB
+  maxFileSize?: number;
+
+  // 导入成功后是否自动 fit view，默认 true
+  fitViewAfterImport?: boolean;
+
+  // 导入成功回调
+  onImportSuccess?: (params: WorkflowImportSuccessParams) => void;
+
+  // 导入失败回调
+  onImportError?: (params: WorkflowImportErrorParams) => void;
+}
+
+enum FlowImportFormat {
+  JSON = 'json',
+  YAML = 'yaml',
 }
 ```
