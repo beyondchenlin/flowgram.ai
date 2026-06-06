@@ -4,7 +4,7 @@
  */
 
 import { FlowDocumentJSON } from './typings';
-import { createLLMInputsValues } from './nodes/llm/defaults';
+import { createLLMDefaultData } from './nodes/llm/defaults';
 import { t } from './i18n';
 
 export const initialData: FlowDocumentJSON = {
@@ -219,7 +219,7 @@ export const initialData: FlowDocumentJSON = {
           },
           data: {
             title: t('LLM_{{index}}', { index: 3 }),
-            inputsValues: createLLMInputsValues(),
+            ...createLLMDefaultData(),
             inputs: {
               type: 'object',
               required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
@@ -271,7 +271,7 @@ export const initialData: FlowDocumentJSON = {
           },
           data: {
             title: t('LLM_{{index}}', { index: 4 }),
-            inputsValues: createLLMInputsValues(),
+            ...createLLMDefaultData(),
             inputs: {
               type: 'object',
               required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
@@ -375,7 +375,7 @@ export const initialData: FlowDocumentJSON = {
       },
       data: {
         title: t('LLM_{{index}}', { index: 1 }),
-        inputsValues: createLLMInputsValues({
+        ...createLLMDefaultData({
           prompt: '# User Input\nquery:{{start_0.query}}\nenable:{{start_0.enable}}',
         }),
         inputs: {
@@ -429,7 +429,7 @@ export const initialData: FlowDocumentJSON = {
       },
       data: {
         title: t('LLM_{{index}}', { index: 2 }),
-        inputsValues: createLLMInputsValues({
+        ...createLLMDefaultData({
           prompt: '# LLM Input\nresult:{{llm_8--A3.result}}',
         }),
         inputs: {

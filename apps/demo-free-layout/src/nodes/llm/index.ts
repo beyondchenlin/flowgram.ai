@@ -9,7 +9,7 @@ import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
 import { t } from '../../i18n';
 import iconLLM from '../../assets/icon-llm.jpg';
-import { createLLMInputsValues } from './defaults';
+import { createLLMDefaultData } from './defaults';
 
 let index = 0;
 export const LLMNodeRegistry: FlowNodeRegistry = {
@@ -32,7 +32,7 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
       type: 'llm',
       data: {
         title: t('LLM_{{index}}', { index: ++index }),
-        inputsValues: createLLMInputsValues(),
+        ...createLLMDefaultData(),
         inputs: {
           type: 'object',
           required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],

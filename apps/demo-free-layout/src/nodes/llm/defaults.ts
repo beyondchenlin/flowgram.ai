@@ -24,8 +24,11 @@ export const demoLLMConfig = {
 } as const;
 
 const defaultSystemPrompt = '# Role\nYou are an AI assistant.\n';
+const demoLLMManagedConfigKey = 'demoLLMManagedConfig';
+const managedValueFingerprintPrefix = 'v1:';
 
 type LLMConfigKey = keyof typeof demoLLMConfig;
+type DemoLLMManagedConfig = Partial<Record<LLMConfigKey, string>>;
 
 export function createLLMInputsValues(
   options: { prompt?: string } = {}
@@ -55,6 +58,16 @@ export function createLLMInputsValues(
       type: 'template',
       content: options.prompt ?? '',
     },
+  };
+}
+
+export function createLLMDefaultData(options: { prompt?: string } = {}): {
+  inputsValues: Record<string, IFlowValue>;
+  [demoLLMManagedConfigKey]: DemoLLMManagedConfig;
+} {
+  return {
+    inputsValues: createLLMInputsValues(options),
+    [demoLLMManagedConfigKey]: createManagedConfig(),
   };
 }
 
@@ -89,13 +102,14 @@ function updateNode(node: FlowNodeJSON): { node: FlowNodeJSON; changed: boolean 
   let changed = false;
 
   if (node.type === WorkflowNodeType.LLM) {
-    const nextInputsValues = updateLLMInputsValues(node.data.inputsValues);
-    if (nextInputsValues.changed) {
+    const nextLLMDefaults = updateLLMDefaults(node.data);
+    if (nextLLMDefaults.changed) {
       nextNode = {
         ...nextNode,
         data: {
           ...nextNode.data,
-          inputsValues: nextInputsValues.inputsValues,
+          inputsValues: nextLLMDefaults.inputsValues,
+          [demoLLMManagedConfigKey]: nextLLMDefaults.managedConfig,
         },
       };
       changed = true;
@@ -120,47 +134,114 @@ function updateNode(node: FlowNodeJSON): { node: FlowNodeJSON; changed: boolean 
   };
 }
 
-function updateLLMInputsValues(inputsValues: Record<string, IFlowValue> | undefined): {
+function updateLLMDefaults(data: FlowNodeJSON['data']): {
   inputsValues: Record<string, IFlowValue> | undefined;
+  managedConfig: DemoLLMManagedConfig;
   changed: boolean;
 } {
+  const inputsValues = data.inputsValues;
+  const currentManagedConfig = normalizeManagedConfig(data[demoLLMManagedConfigKey]);
   if (!inputsValues) {
     return {
       inputsValues,
+      managedConfig: currentManagedConfig,
       changed: false,
     };
   }
 
   let changed = false;
   const nextInputsValues = { ...inputsValues };
+  const nextManagedConfig: DemoLLMManagedConfig = {};
   (Object.keys(demoLLMConfig) as LLMConfigKey[]).forEach((key) => {
     const currentValue = nextInputsValues[key];
-    if (!shouldReplaceInputValue(key, currentValue)) {
+    if (!isManagedDefaultValue(key, currentValue, currentManagedConfig)) {
       return;
     }
 
-    nextInputsValues[key] = {
-      ...currentValue,
-      content: demoLLMConfig[key],
-    };
-    changed = true;
+    nextManagedConfig[key] = createManagedValueFingerprint(demoLLMConfig[key]);
+    if (currentValue.content !== demoLLMConfig[key]) {
+      nextInputsValues[key] = {
+        ...currentValue,
+        content: demoLLMConfig[key],
+      };
+      changed = true;
+    }
   });
+
+  if (!isSameManagedConfig(currentManagedConfig, nextManagedConfig)) {
+    changed = true;
+  }
 
   return {
     inputsValues: nextInputsValues,
+    managedConfig: nextManagedConfig,
     changed,
   };
 }
 
-function shouldReplaceInputValue(
+function isManagedDefaultValue(
   key: LLMConfigKey,
-  value: IFlowValue | undefined
+  value: IFlowValue | undefined,
+  managedConfig: DemoLLMManagedConfig
 ): value is IFlowConstantValue {
-  if (demoLLMConfig[key] === legacyDemoLLMConfig[key]) {
+  if (value?.type !== 'constant' || typeof value.content !== 'string') {
     return false;
   }
 
-  return value?.type === 'constant' && value.content === legacyDemoLLMConfig[key];
+  const previousManagedValue = managedConfig[key];
+  if (previousManagedValue !== undefined) {
+    return createManagedValueFingerprint(value.content) === previousManagedValue;
+  }
+
+  return value.content === legacyDemoLLMConfig[key] || value.content === demoLLMConfig[key];
+}
+
+function normalizeManagedConfig(value: unknown): DemoLLMManagedConfig {
+  if (!value || typeof value !== 'object') {
+    return {};
+  }
+
+  const candidate = value as Partial<Record<string, unknown>>;
+  return (Object.keys(demoLLMConfig) as LLMConfigKey[]).reduce<DemoLLMManagedConfig>(
+    (result, key) => {
+      if (typeof candidate[key] === 'string') {
+        result[key] = normalizeManagedValueFingerprint(candidate[key]);
+      }
+      return result;
+    },
+    {}
+  );
+}
+
+function createManagedConfig(): DemoLLMManagedConfig {
+  return {
+    modelName: createManagedValueFingerprint(demoLLMConfig.modelName),
+    apiKey: createManagedValueFingerprint(demoLLMConfig.apiKey),
+    apiHost: createManagedValueFingerprint(demoLLMConfig.apiHost),
+  };
+}
+
+function isSameManagedConfig(left: DemoLLMManagedConfig, right: DemoLLMManagedConfig): boolean {
+  return (Object.keys(demoLLMConfig) as LLMConfigKey[]).every((key) => left[key] === right[key]);
+}
+
+function normalizeManagedValueFingerprint(value: string): string {
+  if (value.startsWith(managedValueFingerprintPrefix)) {
+    return value;
+  }
+
+  return createManagedValueFingerprint(value);
+}
+
+// Keep managed-default detection without duplicating API keys in document metadata.
+function createManagedValueFingerprint(value: string): string {
+  let hash = 0xcbf29ce484222325n;
+  for (let index = 0; index < value.length; index++) {
+    hash ^= BigInt(value.charCodeAt(index));
+    hash = BigInt.asUintN(64, hash * 0x100000001b3n);
+  }
+
+  return `${managedValueFingerprintPrefix}${value.length}:${hash.toString(36)}`;
 }
 
 function normalizeEnvConfig(value: string | undefined, fallback: string): string {
