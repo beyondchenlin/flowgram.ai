@@ -46,57 +46,50 @@ npm start
 
 3. 在浏览器中打开 [http://localhost:3000](http://localhost:3000)。
 
-## 🖥️ 本地二次开发启动（中文画布 + 局域网访问）
+## 🖥️ 本地 demo 一键启动（局域网访问）
 
-二次开发请启动 dev server，不要只用 `serve dist`。当前 fork 保留完整中文文档入口，同时把两种画布 demo 单独跑起来：
+二次开发请启动 dev server，不要只用 `serve dist`。仓库内置脚本会用 `screen`
+在后台启动 3 个 demo，并把日志写入 `${TMPDIR:-/tmp}/flowgram-dev-logs`：
 
-- `3001`：完整中文文档站
-- `3002`：固定布局画布 demo
-- `3003`：自由布局画布 demo
+- `3001`：固定布局画布 demo（`apps/demo-fixed-layout`）
+- `3002`：Playground demo（`apps/demo-playground`）
+- `3003`：自由布局画布 demo（`apps/demo-free-layout`）
 
-先准备环境：
+先准备依赖：
 
 ```sh
-cd /Users/wangyanxiang/Documents/code/flowgram
-source ~/.nvm/nvm.sh
-nvm use 22.19.0
+cd /path/to/flowgram
 node common/scripts/install-run-rush.js install
 ```
 
-终端 1：监听并编译除 docs 以外的包。
+如果 `apps/demo-free-layout/.env.local` 存在，`3003` 会使用其中的本地大模型配置。
+该文件已被 git 忽略，不要提交真实 API key：
 
 ```sh
-cd /Users/wangyanxiang/Documents/code/flowgram
-source ~/.nvm/nvm.sh
-nvm use 22.19.0
-node common/scripts/install-run-rush.js build:watch --to-except @flowgram.ai/docs
+FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
+FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777
+FLOWGRAM_DEMO_LLM_API_KEY=sk-...
 ```
 
-终端 2：启动完整中文文档站。
+一键启动：
 
 ```sh
-cd /Users/wangyanxiang/Documents/code/flowgram/apps/docs
-source ~/.nvm/nvm.sh
-nvm use 22.19.0
-node ../../common/scripts/install-run-rushx.js dev --host 0.0.0.0 --port 3001
+scripts/start-local-demos.sh start
 ```
 
-终端 3：启动固定布局画布。
+查看状态、停止或重启：
 
 ```sh
-cd /Users/wangyanxiang/Documents/code/flowgram/apps/demo-fixed-layout
-source ~/.nvm/nvm.sh
-nvm use 22.19.0
-MODE=app NODE_ENV=development ./node_modules/.bin/rsbuild dev --host 0.0.0.0 --port 3002
+scripts/start-local-demos.sh status
+scripts/start-local-demos.sh stop
+scripts/start-local-demos.sh restart
 ```
 
-终端 4：启动自由布局画布。
+脚本会创建 `flowgram-3001`、`flowgram-3002`、`flowgram-3003` 三个 detached
+`screen` 会话。也可以直接查看：
 
 ```sh
-cd /Users/wangyanxiang/Documents/code/flowgram/apps/demo-free-layout
-source ~/.nvm/nvm.sh
-nvm use 22.19.0
-MODE=app NODE_ENV=development ./node_modules/.bin/rsbuild dev --host 0.0.0.0 --port 3003
+screen -ls
 ```
 
 查看本机局域网 IP：
@@ -107,16 +100,14 @@ ipconfig getifaddr en0
 
 如果输出为 `192.168.1.127`，同一局域网设备访问：
 
-- `http://192.168.1.127:3001/`：完整中文文档站
-- `http://192.168.1.127:3002/`：固定布局画布
+- `http://192.168.1.127:3001/`：固定布局画布
+- `http://192.168.1.127:3002/`：Playground
 - `http://192.168.1.127:3003/`：自由布局画布
 
-如果端口被占用：
+临时启动过的 `3004` 不属于标准脚本管理；如需停止，按监听进程处理：
 
 ```sh
-lsof -tiTCP:3001 -sTCP:LISTEN | xargs kill
-lsof -tiTCP:3002 -sTCP:LISTEN | xargs kill
-lsof -tiTCP:3003 -sTCP:LISTEN | xargs kill
+lsof -tiTCP:3004 -sTCP:LISTEN | xargs kill
 ```
 
 ### Demo i18n 规则
