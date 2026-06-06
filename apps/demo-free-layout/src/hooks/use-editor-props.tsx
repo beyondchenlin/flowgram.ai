@@ -34,6 +34,7 @@ import {
   createVariablePanelPlugin,
   createPanelManagerPlugin,
 } from '../plugins';
+import { applyDemoLLMConfig } from '../nodes/llm/defaults';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
 import { demoI18nOptions } from '../i18n';
@@ -46,10 +47,12 @@ export function useEditorProps(
 ): FreeLayoutProps {
   const persistedInitialData = useMemo(
     () =>
-      loadWorkflowDocument(
-        createBrowserStorageAdapter(),
-        DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
-        initialData
+      applyDemoLLMConfig(
+        loadWorkflowDocument(
+          createBrowserStorageAdapter(),
+          DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+          initialData
+        )
       ),
     [initialData]
   );

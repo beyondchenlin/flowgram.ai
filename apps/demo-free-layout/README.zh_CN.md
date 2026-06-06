@@ -8,6 +8,18 @@
 npx @flowgram.ai/create-app@latest free-layout
 ```
 
+## 本地大模型配置
+
+demo 的大模型节点可以通过 `apps/demo-free-layout/.env.local` 指向 OpenAI 兼容的本地服务：
+
+```shell
+FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
+FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777
+FLOWGRAM_DEMO_LLM_API_KEY=sk-...
+```
+
+`.env.local` 已被 git 忽略。不要提交真实 API key；注入到这个浏览器 demo 的值会对能够访问页面的人可见。
+
 ## 项目概览
 
 ### 核心技术栈
@@ -385,4 +397,3 @@ i18n: {
   }
 }
 ```
-

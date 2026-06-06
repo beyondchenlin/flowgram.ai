@@ -9,6 +9,7 @@ import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
 import { t } from '../../i18n';
 import iconLLM from '../../assets/icon-llm.jpg';
+import { createLLMInputsValues } from './defaults';
 
 let index = 0;
 export const LLMNodeRegistry: FlowNodeRegistry = {
@@ -31,32 +32,7 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
       type: 'llm',
       data: {
         title: t('LLM_{{index}}', { index: ++index }),
-        inputsValues: {
-          modelName: {
-            type: 'constant',
-            content: 'gpt-3.5-turbo',
-          },
-          apiKey: {
-            type: 'constant',
-            content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-          },
-          apiHost: {
-            type: 'constant',
-            content: 'https://mock-ai-url/api/v3',
-          },
-          temperature: {
-            type: 'constant',
-            content: 0.5,
-          },
-          systemPrompt: {
-            type: 'template',
-            content: '# Role\nYou are an AI assistant.\n',
-          },
-          prompt: {
-            type: 'template',
-            content: '',
-          },
-        },
+        inputsValues: createLLMInputsValues(),
         inputs: {
           type: 'object',
           required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
