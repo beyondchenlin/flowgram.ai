@@ -32,6 +32,7 @@ describe('demo fixed layout i18n languages', () => {
   it('maps add-node panel types to translated display labels', () => {
     expect(getNodePanelLabelKey('switch')).toBe('Switch');
     expect(getNodePanelLabelKey('llm')).toBe('LLM');
+    expect(getNodePanelLabelKey('debug-output')).toBe('Debug Output');
     expect(getNodePanelLabelKey('loop')).toBe('Loop');
     expect(getNodePanelLabelKey('tryCatch')).toBe('TryCatch');
     expect(getNodePanelLabelKey('if')).toBe('If');
@@ -39,6 +40,7 @@ describe('demo fixed layout i18n languages', () => {
     expect(getNodePanelLabelKey('agent')).toBe('Agent');
     expect(getNodePanelLabelKey('tool')).toBe('Tool');
     expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('switch')]).toBe('分支选择');
+    expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('debug-output')]).toBe('调试输出');
     expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('tryCatch')]).toBe('异常捕获');
     expect(demoI18nLanguages['zh-CN'][getNodePanelLabelKey('tool')]).toBe('工具');
   });

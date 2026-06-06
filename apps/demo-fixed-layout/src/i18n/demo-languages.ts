@@ -12,6 +12,7 @@ const zhCNContents = {
   End: '结束',
   Agent: '智能体',
   LLM: '大模型',
+  'Debug Output': '调试输出',
   Memory: '记忆',
   Tool: '工具',
   Tools: '工具',
@@ -19,6 +20,7 @@ const zhCNContents = {
   'Tool_{{index}}': '工具_{{index}}',
   'Agent_{{index}}': '智能体_{{index}}',
   'LLM_{{index}}': '大模型_{{index}}',
+  'Debug Output_{{index}}': '调试输出_{{index}}',
   'Memory_{{index}}': '记忆_{{index}}',
   Switch: '分支选择',
   Loop: '循环',
@@ -45,6 +47,8 @@ const zhCNContents = {
   'Execute only the matched branch when the condition is met.': '满足条件时只执行对应分支。',
   'Call the large language model and use variables and prompts to generate responses.':
     '调用大语言模型，结合变量和提示词生成回复。',
+  'Pass upstream values through unchanged and display runtime outputs for debugging.':
+    '透传上游值，并展示运行时输出，方便调试。',
   'Repeat a group of tasks by setting loop counts and logic.':
     '通过设置循环次数和逻辑，重复执行一组任务。',
   'Catch and handle errors.': '捕获并处理异常。',
@@ -125,6 +129,7 @@ const nodePanelLabelKeys: Record<string, keyof typeof zhCNContents> = {
   end: 'End',
   switch: 'Switch',
   llm: 'LLM',
+  'debug-output': 'Debug Output',
   loop: 'Loop',
   tryCatch: 'TryCatch',
   if: 'If',

@@ -12,6 +12,7 @@ import { LLMNodeRegistry } from './llm';
 import { IFBlockNodeRegistry } from './if-block';
 import { IFNodeRegistry } from './if';
 import { EndNodeRegistry } from './end';
+import { DebugOutputNodeRegistry } from './debug-output';
 import { CatchBlockNodeRegistry } from './catch-block';
 import { CaseDefaultNodeRegistry } from './case-default';
 import { CaseNodeRegistry } from './case';
@@ -23,6 +24,7 @@ export const FlowNodeRegistries: FlowNodeRegistry[] = [
   EndNodeRegistry,
   SwitchNodeRegistry,
   LLMNodeRegistry,
+  DebugOutputNodeRegistry,
   LoopNodeRegistry,
   CaseNodeRegistry,
   TryCatchNodeRegistry,
