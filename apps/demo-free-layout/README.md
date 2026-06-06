@@ -8,6 +8,20 @@ Best-practice demo for free layout
 npx @flowgram.ai/create-app@latest free-layout
 ```
 
+## Local LLM Configuration
+
+The demo LLM node can be pointed at an OpenAI-compatible local service through
+`apps/demo-free-layout/.env.local`:
+
+```shell
+FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
+FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777
+FLOWGRAM_DEMO_LLM_API_KEY=sk-...
+```
+
+`.env.local` is ignored by git. Do not commit real API keys; values injected into this browser demo
+are visible to anyone who can access the served page.
+
 ## Project Overview
 
 ### Core Tech Stack
@@ -385,4 +399,3 @@ i18n: {
   }
 }
 ```
-

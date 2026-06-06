@@ -4,6 +4,7 @@
  */
 
 import { FlowDocumentJSON } from './typings';
+import { createLLMInputsValues } from './nodes/llm/defaults';
 import { t } from './i18n';
 
 export const initialData: FlowDocumentJSON = {
@@ -218,32 +219,7 @@ export const initialData: FlowDocumentJSON = {
           },
           data: {
             title: t('LLM_{{index}}', { index: 3 }),
-            inputsValues: {
-              modelName: {
-                type: 'constant',
-                content: 'gpt-3.5-turbo',
-              },
-              apiKey: {
-                type: 'constant',
-                content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-              },
-              apiHost: {
-                type: 'constant',
-                content: 'https://mock-ai-url/api/v3',
-              },
-              temperature: {
-                type: 'constant',
-                content: 0.5,
-              },
-              systemPrompt: {
-                type: 'template',
-                content: '# Role\nYou are an AI assistant.\n',
-              },
-              prompt: {
-                type: 'template',
-                content: '',
-              },
-            },
+            inputsValues: createLLMInputsValues(),
             inputs: {
               type: 'object',
               required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
@@ -295,32 +271,7 @@ export const initialData: FlowDocumentJSON = {
           },
           data: {
             title: t('LLM_{{index}}', { index: 4 }),
-            inputsValues: {
-              modelName: {
-                type: 'constant',
-                content: 'gpt-3.5-turbo',
-              },
-              apiKey: {
-                type: 'constant',
-                content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-              },
-              apiHost: {
-                type: 'constant',
-                content: 'https://mock-ai-url/api/v3',
-              },
-              temperature: {
-                type: 'constant',
-                content: 0.5,
-              },
-              systemPrompt: {
-                type: 'template',
-                content: '# Role\nYou are an AI assistant.\n',
-              },
-              prompt: {
-                type: 'template',
-                content: '',
-              },
-            },
+            inputsValues: createLLMInputsValues(),
             inputs: {
               type: 'object',
               required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
@@ -424,32 +375,9 @@ export const initialData: FlowDocumentJSON = {
       },
       data: {
         title: t('LLM_{{index}}', { index: 1 }),
-        inputsValues: {
-          modelName: {
-            type: 'constant',
-            content: 'gpt-3.5-turbo',
-          },
-          apiKey: {
-            type: 'constant',
-            content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-          },
-          apiHost: {
-            type: 'constant',
-            content: 'https://mock-ai-url/api/v3',
-          },
-          temperature: {
-            type: 'constant',
-            content: 0.5,
-          },
-          systemPrompt: {
-            type: 'template',
-            content: '# Role\nYou are an AI assistant.\n',
-          },
-          prompt: {
-            type: 'template',
-            content: '# User Input\nquery:{{start_0.query}}\nenable:{{start_0.enable}}',
-          },
-        },
+        inputsValues: createLLMInputsValues({
+          prompt: '# User Input\nquery:{{start_0.query}}\nenable:{{start_0.enable}}',
+        }),
         inputs: {
           type: 'object',
           required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
@@ -501,32 +429,9 @@ export const initialData: FlowDocumentJSON = {
       },
       data: {
         title: t('LLM_{{index}}', { index: 2 }),
-        inputsValues: {
-          modelName: {
-            type: 'constant',
-            content: 'gpt-3.5-turbo',
-          },
-          apiKey: {
-            type: 'constant',
-            content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-          },
-          apiHost: {
-            type: 'constant',
-            content: 'https://mock-ai-url/api/v3',
-          },
-          temperature: {
-            type: 'constant',
-            content: 0.5,
-          },
-          systemPrompt: {
-            type: 'template',
-            content: '# Role\nYou are an AI assistant.\n',
-          },
-          prompt: {
-            type: 'template',
-            content: '# LLM Input\nresult:{{llm_8--A3.result}}',
-          },
-        },
+        inputsValues: createLLMInputsValues({
+          prompt: '# LLM Input\nresult:{{llm_8--A3.result}}',
+        }),
         inputs: {
           type: 'object',
           required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
