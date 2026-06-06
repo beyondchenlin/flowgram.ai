@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+ * SPDX-License-Identifier: MIT
+ */
+
 import '@flowgram.ai/fixed-layout-editor/index.css';
 
 import { FC } from 'react';
