@@ -6,7 +6,10 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { useClientContext, FlowNodeEntity } from '@flowgram.ai/free-layout-editor';
-import { Button, Badge } from '@douyinfe/semi-ui';
+import { Button, Badge, Toast } from '@douyinfe/semi-ui';
+
+import { CustomService } from '../../services';
+import { t } from '../../i18n';
 
 export function Save(props: { disabled: boolean }) {
   const [errorCount, setErrorCount] = useState(0);
@@ -19,12 +22,20 @@ export function Save(props: { disabled: boolean }) {
   }, [clientContext]);
 
   /**
-   * Validate all node and Save
+   * Validate all node forms and save a document snapshot.
    */
   const onSave = useCallback(async () => {
-    const allForms = clientContext.document.getAllNodes().map((node) => node.form);
-    await Promise.all(allForms.map(async (form) => form?.validate()));
-    console.log('>>>>> save data: ', clientContext.document.toJSON());
+    try {
+      const result = await clientContext.get(CustomService).save();
+      setErrorCount(result.errorCount);
+      if (result.saved) {
+        Toast.success(t('Saved'));
+      } else {
+        Toast.error(t('Please fix validation errors before saving'));
+      }
+    } catch {
+      Toast.error(t('Save failed'));
+    }
   }, [clientContext]);
 
   /**
@@ -38,12 +49,13 @@ export function Save(props: { disabled: boolean }) {
         node.onDispose(() => formValidateDispose.dispose());
       }
     };
-    clientContext.document.getAllNodes().map((node) => listenSingleNodeValidate(node));
+    clientContext.document.getAllNodes().forEach((node) => listenSingleNodeValidate(node));
+    updateValidateData();
     const dispose = clientContext.document.onNodeCreate(({ node }) =>
       listenSingleNodeValidate(node)
     );
     return () => dispose.dispose();
-  }, [clientContext]);
+  }, [clientContext, updateValidateData]);
 
   if (errorCount === 0) {
     return (
@@ -52,7 +64,7 @@ export function Save(props: { disabled: boolean }) {
         onClick={onSave}
         style={{ backgroundColor: 'rgba(171,181,255,0.3)', borderRadius: '8px' }}
       >
-        Save
+        {t('Save')}
       </Button>
     );
   }
@@ -64,7 +76,7 @@ export function Save(props: { disabled: boolean }) {
         onClick={onSave}
         style={{ backgroundColor: 'rgba(255, 179, 171, 0.3)', borderRadius: '8px' }}
       >
-          Save
+        {t('Save')}
       </Button>
     </Badge>
   );

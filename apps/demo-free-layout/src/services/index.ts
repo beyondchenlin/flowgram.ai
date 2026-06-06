@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { CustomService } from './custom-service';
+export { CustomService, DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY } from './custom-service';
 export { ValidateService } from './validate-service';

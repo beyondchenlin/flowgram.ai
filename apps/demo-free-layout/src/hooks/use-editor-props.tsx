@@ -16,6 +16,8 @@ import {
   FreeLayoutPluginContext,
   FreeLayoutProps,
   WorkflowNodeEntity,
+  createBrowserStorageAdapter,
+  loadWorkflowDocument,
 } from '@flowgram.ai/free-layout-editor';
 import { createFreeGroupPlugin } from '@flowgram.ai/free-group-plugin';
 import { createContainerNodePlugin } from '@flowgram.ai/free-container-plugin';
@@ -24,8 +26,7 @@ import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
 import { canContainNode, onDragLineEnd } from '../utils';
 import { FlowNodeRegistry, FlowDocumentJSON } from '../typings';
 import { shortcuts } from '../shortcuts';
-import { CustomService, ValidateService } from '../services';
-import { GetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
+import { CustomService, DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY, ValidateService } from '../services';
 import { WorkflowRuntimeService } from '../plugins/runtime-plugin/runtime-service';
 import {
   createRuntimePlugin,
@@ -43,6 +44,16 @@ export function useEditorProps(
   initialData: FlowDocumentJSON,
   nodeRegistries: FlowNodeRegistry[]
 ): FreeLayoutProps {
+  const persistedInitialData = useMemo(
+    () =>
+      loadWorkflowDocument(
+        createBrowserStorageAdapter(),
+        DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+        initialData
+      ),
+    [initialData]
+  );
+
   return useMemo<FreeLayoutProps>(
     () => ({
       /**
@@ -78,7 +89,7 @@ export function useEditorProps(
        * Initial data
        * 初始化数据
        */
-      initialData,
+      initialData: persistedInitialData,
       /**
        * Node registries
        * 节点注册
@@ -229,13 +240,12 @@ export function useEditorProps(
       /**
        * Content change
        */
-      onContentChange: debounce((ctx: FreeLayoutPluginContext, event) => {
+      onContentChange: debounce((ctx: FreeLayoutPluginContext) => {
         if (ctx.document.disposed) return;
-
-        console.log('Auto Save: ', event, {
-          ...ctx.document.toJSON(),
-          globalVariable: ctx.get<GetGlobalVariableSchema>(GetGlobalVariableSchema)(),
-        });
+        void ctx
+          .get(CustomService)
+          .save({ validate: false })
+          .catch(() => undefined);
       }, 1000),
       /**
        * Running line
@@ -381,12 +391,12 @@ export function useEditorProps(
          * 变量面板插件
          */
         createVariablePanelPlugin({
-          initialData: initialData.globalVariable,
+          initialData: persistedInitialData.globalVariable,
         }),
         /** Float layout plugin */
         createPanelManagerPlugin(),
       ],
     }),
-    []
+    [persistedInitialData, nodeRegistries]
   );
 }

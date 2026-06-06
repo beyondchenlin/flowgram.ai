@@ -16,6 +16,7 @@ import { t } from '../../i18n';
 import { ZoomSelect } from './zoom-select';
 import { SwitchLine } from './switch-line';
 import { ToolContainer, ToolSection } from './styles';
+import { Save } from './save';
 import { Readonly } from './readonly';
 import { MinimapSwitch } from './minimap-switch';
 import { Minimap } from './minimap';
@@ -77,6 +78,7 @@ export const DemoTools = () => {
         </Tooltip>
         <ProblemButton />
         <DownloadTool />
+        <Save disabled={playground.config.readonly} />
         <Divider layout="vertical" style={{ height: '16px' }} margin={3} />
         <AddNode disabled={playground.config.readonly} />
         <Divider layout="vertical" style={{ height: '16px' }} margin={3} />

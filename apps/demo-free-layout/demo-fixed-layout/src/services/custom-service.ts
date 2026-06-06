@@ -9,7 +9,15 @@ import {
   SelectionService,
   Playground,
   FlowDocument,
+  FlowDocumentJSON,
+  StorageService,
+  saveWorkflowDocument,
+  type SaveWorkflowDocumentOptions,
+  type WorkflowDocumentSaveResult,
 } from '@flowgram.ai/fixed-layout-editor';
+
+export const DEMO_EMBEDDED_FIXED_LAYOUT_DOCUMENT_STORAGE_KEY =
+  'flowgram.demo.embedded-fixed-layout.document';
 
 /**
  * Docs: https://inversify.io/docs/introduction/getting-started/
@@ -41,7 +49,17 @@ export class CustomService {
 
   @inject(FlowDocument) document: FlowDocument;
 
-  save() {
-    console.log(this.document.toJSON());
+  save(
+    options?: Pick<
+      SaveWorkflowDocumentOptions<FlowDocumentJSON>,
+      'blockOnValidationErrors' | 'validate'
+    >
+  ): Promise<WorkflowDocumentSaveResult<FlowDocumentJSON>> {
+    return saveWorkflowDocument<FlowDocumentJSON>({
+      document: this.document,
+      storage: this.ctx.get(StorageService),
+      storageKey: DEMO_EMBEDDED_FIXED_LAYOUT_DOCUMENT_STORAGE_KEY,
+      ...options,
+    });
   }
 }

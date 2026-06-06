@@ -17,12 +17,14 @@ import {
   FlowRendererKey,
   ShortcutsRegistry,
   ConstantKeys,
+  createBrowserStorageAdapter,
+  loadWorkflowDocument,
 } from '@flowgram.ai/fixed-layout-editor';
 import { createDownloadPlugin } from '@flowgram.ai/export-plugin';
 
 import { type FlowNodeRegistry } from '../typings';
 import { shortcutGetter } from '../shortcuts';
-import { CustomService } from '../services';
+import { CustomService, DEMO_FIXED_LAYOUT_DOCUMENT_STORAGE_KEY } from '../services';
 import { GroupBoxHeader, GroupNode } from '../plugins/group-plugin';
 import { createClipboardPlugin, createVariablePanelPlugin } from '../plugins';
 import { demoI18nOptions, t } from '../i18n';
@@ -38,6 +40,16 @@ export function useEditorProps(
   initialData: FlowDocumentJSON,
   nodeRegistries: FlowNodeRegistry[]
 ): FixedLayoutProps {
+  const persistedInitialData = useMemo(
+    () =>
+      loadWorkflowDocument(
+        createBrowserStorageAdapter(),
+        DEMO_FIXED_LAYOUT_DOCUMENT_STORAGE_KEY,
+        initialData
+      ),
+    [initialData]
+  );
+
   return useMemo<FixedLayoutProps>(
     () => ({
       /**
@@ -64,7 +76,7 @@ export function useEditorProps(
        * Initial data
        * 初始化数据
        */
-      initialData,
+      initialData: persistedInitialData,
       /**
        * Node registries
        * 节点注册
@@ -165,10 +177,12 @@ export function useEditorProps(
       history: {
         enable: true,
         enableChangeNode: true, // Listen Node engine data change
-        onApply: debounce((ctx, opt) => {
+        onApply: debounce((ctx) => {
           if (ctx.document.disposed) return;
-          // Listen change to trigger auto save
-          console.log('auto save: ', ctx.document.toJSON());
+          void ctx
+            .get(CustomService)
+            .save({ validate: false })
+            .catch(() => undefined);
         }, 100),
       },
       /**
@@ -304,6 +318,6 @@ export function useEditorProps(
         }),
       ],
     }),
-    []
+    [persistedInitialData, nodeRegistries]
   );
 }

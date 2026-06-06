@@ -6,10 +6,12 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { useClientContext, FlowNodeEntity } from '@flowgram.ai/free-layout-editor';
-import { Button, Badge } from '@douyinfe/semi-ui';
+import { Button, Badge, Toast } from '@douyinfe/semi-ui';
 import { IconPlay } from '@douyinfe/semi-icons';
 
+import { CustomService } from '../../../services';
 import { useTestRunFormPanel } from '../../../plugins/panel-manager-plugin/hooks';
+import { t } from '../../../i18n';
 
 import styles from './index.module.less';
 
@@ -23,14 +25,21 @@ export function TestRunButton(props: { disabled: boolean }) {
   }, [clientContext]);
   const { open: openPanel } = useTestRunFormPanel();
   /**
-   * Validate all node and Save
+   * Save a valid document snapshot before opening the test run panel.
    */
   const onTestRun = useCallback(async () => {
-    const allForms = clientContext.document.getAllNodes().map((node) => node.form);
-    await Promise.all(allForms.map(async (form) => form?.validate()));
-    console.log('>>>>> save data: ', clientContext.document.toJSON());
-    openPanel();
-  }, [clientContext]);
+    try {
+      const result = await clientContext.get(CustomService).save({ blockOnValidationErrors: true });
+      setErrorCount(result.errorCount);
+      if (result.saved) {
+        openPanel();
+      } else {
+        Toast.error(t('Please fix validation errors before saving'));
+      }
+    } catch {
+      Toast.error(t('Save failed'));
+    }
+  }, [clientContext, openPanel]);
 
   /**
    * Listen single node validate
@@ -43,12 +52,13 @@ export function TestRunButton(props: { disabled: boolean }) {
         node.onDispose(() => formValidateDispose.dispose());
       }
     };
-    clientContext.document.getAllNodes().map((node) => listenSingleNodeValidate(node));
+    clientContext.document.getAllNodes().forEach((node) => listenSingleNodeValidate(node));
+    updateValidateData();
     const dispose = clientContext.document.onNodeCreate(({ node }) =>
       listenSingleNodeValidate(node)
     );
     return () => dispose.dispose();
-  }, [clientContext]);
+  }, [clientContext, updateValidateData]);
 
   const button =
     errorCount === 0 ? (
@@ -58,7 +68,7 @@ export function TestRunButton(props: { disabled: boolean }) {
         icon={<IconPlay size="small" />}
         className={styles.testrunSuccessButton}
       >
-        Test Run
+        {t('Test Run')}
       </Button>
     ) : (
       <Badge count={errorCount} position="rightTop" type="danger">
@@ -69,7 +79,7 @@ export function TestRunButton(props: { disabled: boolean }) {
           icon={<IconPlay size="small" />}
           className={styles.testrunErrorButton}
         >
-            Test Run
+          {t('Test Run')}
         </Button>
       </Badge>
     );

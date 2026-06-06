@@ -9,7 +9,16 @@ import {
   SelectionService,
   Playground,
   WorkflowDocument,
+  StorageService,
+  saveWorkflowDocument,
+  type SaveWorkflowDocumentOptions,
+  type WorkflowDocumentSaveResult,
 } from '@flowgram.ai/free-layout-editor';
+
+import { type FlowDocumentJSON } from '../typings';
+import { GetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
+
+export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY = 'flowgram.demo.free-layout.document';
 
 /**
  * Docs: https://inversify.io/docs/introduction/getting-started/
@@ -41,7 +50,21 @@ export class CustomService {
 
   @inject(WorkflowDocument) document: WorkflowDocument;
 
-  save() {
-    console.log(this.document.toJSON());
+  save(
+    options?: Pick<
+      SaveWorkflowDocumentOptions<FlowDocumentJSON>,
+      'blockOnValidationErrors' | 'validate'
+    >
+  ): Promise<WorkflowDocumentSaveResult<FlowDocumentJSON>> {
+    return saveWorkflowDocument<FlowDocumentJSON>({
+      document: this.document,
+      storage: this.ctx.get(StorageService),
+      storageKey: DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+      ...options,
+      getData: () => ({
+        ...(this.document.toJSON() as FlowDocumentJSON),
+        globalVariable: this.ctx.get<GetGlobalVariableSchema>(GetGlobalVariableSchema)(),
+      }),
+    });
   }
 }
