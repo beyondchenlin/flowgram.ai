@@ -63,9 +63,17 @@ export const initialData: FlowDocumentJSON = {
               data: {
                 title: t('LLM'),
                 inputsValues: {
-                  modelType: {
+                  modelName: {
                     type: 'constant',
                     content: 'gpt-3.5-turbo',
+                  },
+                  apiKey: {
+                    type: 'constant',
+                    content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                  },
+                  apiHost: {
+                    type: 'constant',
+                    content: 'https://mock-ai-url/api/v3',
                   },
                   temperature: {
                     type: 'constant',
@@ -82,9 +90,15 @@ export const initialData: FlowDocumentJSON = {
                 },
                 inputs: {
                   type: 'object',
-                  required: ['modelType', 'temperature', 'prompt'],
+                  required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
                   properties: {
-                    modelType: {
+                    modelName: {
+                      type: 'string',
+                    },
+                    apiKey: {
+                      type: 'string',
+                    },
+                    apiHost: {
                       type: 'string',
                     },
                     temperature: {
@@ -155,9 +169,17 @@ export const initialData: FlowDocumentJSON = {
       data: {
         title: t('LLM'),
         inputsValues: {
-          modelType: {
+          modelName: {
             type: 'constant',
             content: 'gpt-3.5-turbo',
+          },
+          apiKey: {
+            type: 'constant',
+            content: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+          },
+          apiHost: {
+            type: 'constant',
+            content: 'https://mock-ai-url/api/v3',
           },
           temperature: {
             type: 'constant',
@@ -174,9 +196,15 @@ export const initialData: FlowDocumentJSON = {
         },
         inputs: {
           type: 'object',
-          required: ['modelType', 'temperature', 'prompt'],
+          required: ['modelName', 'apiKey', 'apiHost', 'temperature', 'prompt'],
           properties: {
-            modelType: {
+            modelName: {
+              type: 'string',
+            },
+            apiKey: {
+              type: 'string',
+            },
+            apiHost: {
               type: 'string',
             },
             temperature: {
