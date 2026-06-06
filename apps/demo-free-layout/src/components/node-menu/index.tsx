@@ -21,6 +21,7 @@ import { IconMore } from '@douyinfe/semi-icons';
 import { FlowNodeRegistry } from '../../typings';
 import { PasteShortcut } from '../../shortcuts/paste';
 import { CopyShortcut } from '../../shortcuts/copy';
+import { t } from '../../i18n';
 
 interface NodeMenuProps {
   node: WorkflowNodeEntity;
@@ -116,19 +117,19 @@ export const NodeMenu: FC<NodeMenuProps> = ({ node, deleteNode, updateTitleEdit 
       position="bottomRight"
       render={
         <Dropdown.Menu>
-          <Dropdown.Item onClick={handleEditTitle}>Edit Title</Dropdown.Item>
-          {canMoveOut && <Dropdown.Item onClick={handleMoveOut}>Move out</Dropdown.Item>}
+          <Dropdown.Item onClick={handleEditTitle}>{t('Edit Title')}</Dropdown.Item>
+          {canMoveOut && <Dropdown.Item onClick={handleMoveOut}>{t('Move out')}</Dropdown.Item>}
           <Dropdown.Item onClick={handleCopy} disabled={registry.meta!.copyDisable === true}>
-            Create Copy
+            {t('Create Copy')}
           </Dropdown.Item>
           {registry.meta.isContainer && (
-            <Dropdown.Item onClick={handleAutoLayout}>Auto Layout</Dropdown.Item>
+            <Dropdown.Item onClick={handleAutoLayout}>{t('Auto Layout')}</Dropdown.Item>
           )}
           <Dropdown.Item
             onClick={handleDelete}
             disabled={!!(registry.canDelete?.(clientContext, node) || registry.meta!.deleteDisable)}
           >
-            Delete
+            {t('Delete')}
           </Dropdown.Item>
         </Dropdown.Menu>
       }

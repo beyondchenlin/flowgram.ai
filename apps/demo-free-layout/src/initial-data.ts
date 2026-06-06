@@ -4,6 +4,7 @@
  */
 
 import { FlowDocumentJSON } from './typings';
+import { t } from './i18n';
 
 export const initialData: FlowDocumentJSON = {
   nodes: [
@@ -17,7 +18,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'Start',
+        title: t('Start'),
         outputs: {
           type: 'object',
           properties: {
@@ -57,7 +58,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'Condition',
+        title: t('Condition'),
         conditions: [
           {
             key: 'if_0',
@@ -86,7 +87,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'End',
+        title: t('End'),
         inputsValues: {
           success: {
             type: 'constant',
@@ -140,7 +141,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'HTTP_1',
+        title: t('HTTP Request_{{index}}', { index: 1 }),
         outputs: {
           type: 'object',
           properties: {
@@ -181,7 +182,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'Loop_1',
+        title: t('Loop_{{index}}', { index: 1 }),
         loopFor: {
           type: 'ref',
           content: ['start_0', 'array_obj'],
@@ -216,7 +217,7 @@ export const initialData: FlowDocumentJSON = {
             },
           },
           data: {
-            title: 'LLM_3',
+            title: t('LLM_{{index}}', { index: 3 }),
             inputsValues: {
               modelName: {
                 type: 'constant',
@@ -293,7 +294,7 @@ export const initialData: FlowDocumentJSON = {
             },
           },
           data: {
-            title: 'LLM_4',
+            title: t('LLM_{{index}}', { index: 4 }),
             inputsValues: {
               modelName: {
                 type: 'constant',
@@ -422,7 +423,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'LLM_1',
+        title: t('LLM_{{index}}', { index: 1 }),
         inputsValues: {
           modelName: {
             type: 'constant',
@@ -499,7 +500,7 @@ export const initialData: FlowDocumentJSON = {
         },
       },
       data: {
-        title: 'LLM_2',
+        title: t('LLM_{{index}}', { index: 2 }),
         inputsValues: {
           modelName: {
             type: 'constant',

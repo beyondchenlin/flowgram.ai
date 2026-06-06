@@ -6,6 +6,8 @@
 import { FlowNodeEntity } from '@flowgram.ai/fixed-layout-editor';
 import { Typography } from '@douyinfe/semi-ui';
 
+import { t } from '../../i18n';
+
 interface PropsType {
   node: FlowNodeEntity;
 }
@@ -40,7 +42,7 @@ export function AgentLabel(props: PropsType) {
         color: '#8F959E',
       }}
     >
-      {label}
+      {t(label)}
     </Text>
   );
 }

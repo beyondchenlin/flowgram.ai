@@ -16,6 +16,7 @@ import {
 import { IconButton, Tooltip } from '@douyinfe/semi-ui';
 
 import { WorkflowNodeType } from '../../nodes';
+import { t } from '../../i18n';
 import { IconComment } from '../../assets/icon-comment';
 
 export const Comment = () => {
@@ -61,7 +62,7 @@ export const Comment = () => {
       trigger="custom"
       visible={tooltipVisible}
       onVisibleChange={setTooltipVisible}
-      content="Comment"
+      content={t('Comment')}
     >
       <IconButton
         disabled={playground.config.readonly}

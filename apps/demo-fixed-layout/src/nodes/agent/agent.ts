@@ -9,6 +9,7 @@ import { FlowNodeBaseType } from '@flowgram.ai/fixed-layout-editor';
 import { LLMNodeRegistry } from '../llm';
 import { defaultFormMeta } from '../default-form-meta';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconRobot from '../../assets/icon-robot.svg';
 import { ToolNodeRegistry } from './tool';
 import { MemoryNodeRegistry } from './memory';
@@ -19,7 +20,7 @@ export const AgentNodeRegistry: FlowNodeRegistry = {
   extend: FlowNodeBaseType.SLOT,
   info: {
     icon: iconRobot,
-    description: 'AI Agent.',
+    description: t('AI agent.'),
   },
   formMeta: defaultFormMeta,
   onAdd(ctx, from) {
@@ -44,7 +45,7 @@ export const AgentNodeRegistry: FlowNodeRegistry = {
         },
       ],
       data: {
-        title: `Agent_${++index}`,
+        title: t('Agent_{{index}}', { index: ++index }),
         outputs: {
           type: 'object',
           properties: {

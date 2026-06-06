@@ -5,10 +5,11 @@
 
 import { nanoid } from 'nanoid';
 
+import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconBreak from '../../assets/icon-break.jpg';
 import { formMeta } from './form-meta';
-import { WorkflowNodeType } from '../constants';
 
 let index = 0;
 export const BreakNodeRegistry: FlowNodeRegistry = {
@@ -25,8 +26,7 @@ export const BreakNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconBreak,
-    description:
-      'The final node of the workflow, used to return the result information after the workflow is run.',
+    description: t('Interrupt the current loop.'),
   },
   /**
    * Render node via formMeta
@@ -37,7 +37,7 @@ export const BreakNodeRegistry: FlowNodeRegistry = {
       id: `break_${nanoid(5)}`,
       type: 'break',
       data: {
-        title: `Break_${++index}`,
+        title: t('Break_{{index}}', { index: ++index }),
       },
     };
   },

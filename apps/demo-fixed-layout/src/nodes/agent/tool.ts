@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { defaultFormMeta } from '../default-form-meta';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconTool from '../../assets/icon-tool.svg';
 
 let index = 0;
@@ -14,7 +15,7 @@ export const ToolNodeRegistry: FlowNodeRegistry = {
   type: 'tool',
   info: {
     icon: iconTool,
-    description: 'Tool.',
+    description: t('Tool.'),
   },
   meta: {
     // addDisable: true,
@@ -28,7 +29,7 @@ export const ToolNodeRegistry: FlowNodeRegistry = {
       id: `tool${nanoid(5)}`,
       type: 'tool',
       data: {
-        title: `Tool_${++index}`,
+        title: t('Tool_{{index}}', { index: ++index }),
       },
     };
   },

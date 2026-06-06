@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconStart from '../../assets/icon-start.jpg';
 import { formMeta } from './form-meta';
-import { WorkflowNodeType } from '../constants';
 
 export const BlockStartNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.BlockStart,
@@ -31,7 +32,7 @@ export const BlockStartNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconStart,
-    description: 'The starting node of the block.',
+    description: t('Block start node.'),
   },
   /**
    * Render node via formMeta

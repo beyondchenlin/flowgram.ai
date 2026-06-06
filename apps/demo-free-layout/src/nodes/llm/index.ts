@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconLLM from '../../assets/icon-llm.jpg';
 
 let index = 0;
@@ -14,8 +15,9 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.LLM,
   info: {
     icon: iconLLM,
-    description:
-      'Call the large language model and use variables and prompt words to generate responses.',
+    description: t(
+      'Call the large language model and use variables and prompts to generate responses.'
+    ),
   },
   meta: {
     size: {
@@ -28,7 +30,7 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
       id: `llm_${nanoid(5)}`,
       type: 'llm',
       data: {
-        title: `LLM_${++index}`,
+        title: t('LLM_{{index}}', { index: ++index }),
         inputsValues: {
           modelName: {
             type: 'constant',

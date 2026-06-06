@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Button, Collapsible, Tabs, Tooltip } from '@douyinfe/semi-ui';
 import { IconMinus } from '@douyinfe/semi-icons';
 
+import { t } from '../../../i18n';
 import iconVariable from '../../../assets/icon-variable.png';
 import { GlobalVariableEditor } from './global-variable-editor';
 import { FullVariableList } from './full-variable-list';
@@ -19,7 +20,7 @@ export function VariablePanel() {
 
   return (
     <div className={styles['panel-wrapper']}>
-      <Tooltip content="Toggle Variable Panel">
+      <Tooltip content={t('Open/close variable panel')}>
         <Button
           className={`${styles['variable-panel-button']} ${isOpen ? styles.close : ''}`}
           theme={isOpen ? 'borderless' : 'light'}
@@ -31,10 +32,10 @@ export function VariablePanel() {
       <Collapsible isOpen={isOpen}>
         <div className={styles['panel-container']}>
           <Tabs>
-            <Tabs.TabPane itemKey="variables" tab="Variable List">
+            <Tabs.TabPane itemKey="variables" tab={t('Variable List')}>
               <FullVariableList />
             </Tabs.TabPane>
-            <Tabs.TabPane itemKey="global" tab="Global Editor">
+            <Tabs.TabPane itemKey="global" tab={t('Global Variable Editor')}>
               <GlobalVariableEditor />
             </Tabs.TabPane>
           </Tabs>

@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconHTTP from '../../assets/icon-http.svg';
 import { formMeta } from './form-meta';
 
@@ -16,7 +17,7 @@ export const HTTPNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.HTTP,
   info: {
     icon: iconHTTP,
-    description: 'Call the HTTP API',
+    description: t('Call HTTP API'),
   },
   meta: {
     size: {
@@ -29,7 +30,7 @@ export const HTTPNodeRegistry: FlowNodeRegistry = {
       id: `http_${nanoid(5)}`,
       type: 'http',
       data: {
-        title: `HTTP_${++index}`,
+        title: t('HTTP Request_{{index}}', { index: ++index }),
         api: {
           method: 'GET',
         },

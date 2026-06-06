@@ -18,6 +18,7 @@ import {
 } from '@flowgram.ai/form-materials';
 
 import { FlowNodeJSON, JsonSchema } from '../../typings';
+import { t } from '../../i18n';
 import { useIsSidebar } from '../../hooks';
 import { FormHeader, FormContent } from '../../form-components';
 
@@ -57,7 +58,7 @@ export const formMeta: FormMeta<FlowNodeJSON> = {
   render: renderForm,
   validateTrigger: ValidateTrigger.onChange,
   validate: {
-    title: ({ value }: { value: string }) => (value ? undefined : 'Title is required'),
+    title: ({ value }: { value: string }) => (value ? undefined : t('Title is required')),
   },
   effect: {
     title: syncVariableTitle,

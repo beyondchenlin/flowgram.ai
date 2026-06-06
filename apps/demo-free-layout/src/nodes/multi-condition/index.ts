@@ -9,10 +9,10 @@
  */
 import { nanoid } from 'nanoid';
 
-import { FlowNodeRegistry } from '../../typings';
 import { WorkflowNodeType } from '../constants';
+import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconCondition from '../../assets/icon-condition.svg';
-
 import { formMeta } from './form-meta';
 
 let index = 0;
@@ -20,8 +20,7 @@ export const MultiConditionNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.MultiCondition,
   info: {
     icon: iconCondition,
-    description:
-      'Connect multiple downstream branches. Only the corresponding branch will be executed if the set conditions are met.',
+    description: t('Connect multiple downstream branches and execute only the matched branch.'),
   },
   meta: {
     defaultPorts: [{ type: 'input' }],
@@ -39,7 +38,7 @@ export const MultiConditionNodeRegistry: FlowNodeRegistry = {
       id: `multi_condition_${nanoid(5)}`,
       type: 'condition',
       data: {
-        title: `multi_condition_${++index}`,
+        title: t('Multi Condition_{{index}}', { index: ++index }),
         branch: [
           {
             logic: 'and',

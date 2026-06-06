@@ -8,6 +8,7 @@ import { FlowNodeSplitType } from '@flowgram.ai/fixed-layout-editor';
 
 import { defaultFormMeta } from '../default-form-meta';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconCondition from '../../assets/icon-condition.svg';
 
 export const SwitchNodeRegistry: FlowNodeRegistry = {
@@ -15,8 +16,7 @@ export const SwitchNodeRegistry: FlowNodeRegistry = {
   type: 'switch',
   info: {
     icon: iconCondition,
-    description:
-      'Connect multiple downstream branches. Only the corresponding branch will be executed if the set conditions are met.',
+    description: t('Connect multiple downstream branches and execute only the matched branch.'),
   },
   meta: {
     expandable: false, // disable expanded
@@ -27,14 +27,14 @@ export const SwitchNodeRegistry: FlowNodeRegistry = {
       id: `switch_${nanoid(5)}`,
       type: 'switch',
       data: {
-        title: 'Switch',
+        title: t('Switch'),
       },
       blocks: [
         {
           id: nanoid(5),
           type: 'case',
           data: {
-            title: 'Case_0',
+            title: t('Case_{{index}}', { index: 0 }),
             inputsValues: {
               condition: { type: 'constant', content: '' },
             },
@@ -54,7 +54,7 @@ export const SwitchNodeRegistry: FlowNodeRegistry = {
           id: nanoid(5),
           type: 'case',
           data: {
-            title: 'Case_1',
+            title: t('Case_{{index}}', { index: 1 }),
             inputsValues: {
               condition: { type: 'constant', content: '' },
             },
@@ -73,7 +73,7 @@ export const SwitchNodeRegistry: FlowNodeRegistry = {
           id: nanoid(5),
           type: 'caseDefault',
           data: {
-            title: 'Default',
+            title: t('Default Branch'),
           },
           blocks: [],
         },

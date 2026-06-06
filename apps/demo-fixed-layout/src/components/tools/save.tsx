@@ -8,6 +8,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useClientContext, FlowNodeEntity } from '@flowgram.ai/fixed-layout-editor';
 import { Button, Badge } from '@douyinfe/semi-ui';
 
+import { t } from '../../i18n';
+
 export function Save(props: { disabled: boolean }) {
   const [errorCount, setErrorCount] = useState(0);
   const clientContext = useClientContext();
@@ -47,14 +49,14 @@ export function Save(props: { disabled: boolean }) {
   if (errorCount === 0) {
     return (
       <Button disabled={props.disabled} onClick={onSave}>
-        Save
+        {t('Save')}
       </Button>
     );
   }
   return (
     <Badge count={errorCount} position="rightTop" type="danger">
       <Button type="danger" disabled={props.disabled} onClick={onSave}>
-        Save
+        {t('Save')}
       </Button>
     </Badge>
   );

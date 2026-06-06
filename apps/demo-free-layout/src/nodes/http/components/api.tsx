@@ -7,6 +7,7 @@ import { Field } from '@flowgram.ai/free-layout-editor';
 import { IFlowTemplateValue, PromptEditorWithVariables } from '@flowgram.ai/form-materials';
 import { Select } from '@douyinfe/semi-ui';
 
+import { t } from '../../../i18n';
 import { useNodeRenderContext } from '../../../hooks';
 import { FormItem } from '../../../form-components';
 
@@ -45,7 +46,7 @@ export function Api() {
                 disableMarkdownHighlight
                 readonly={readonly}
                 style={{ flexGrow: 1 }}
-                placeholder="Input URL, use var by '{'"
+                placeholder={t("Input URL, use var by '{'")}
                 value={field.value}
                 onChange={(value) => {
                   field.onChange(value!);

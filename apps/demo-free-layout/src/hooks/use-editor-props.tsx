@@ -35,6 +35,7 @@ import {
 } from '../plugins';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
+import { demoI18nOptions } from '../i18n';
 import { SelectorBoxPopover } from '../components/selector-box-popover';
 import { BaseNode, CommentRender, GroupNodeRender, LineAddButton, NodePanel } from '../components';
 
@@ -271,16 +272,7 @@ export function useEditorProps(
       onDispose() {
         console.log('---- Playground Dispose ----');
       },
-      i18n: {
-        locale: navigator.language,
-        languages: {
-          'zh-CN': {
-            'Never Remind': '不再提示',
-            'Hold {{key}} to drag node out': '按住 {{key}} 可以将节点拖出',
-          },
-          'en-US': {},
-        },
-      },
+      i18n: demoI18nOptions,
       plugins: () => [
         /**
          * Custom node sorting, the code below will make the comment nodes always below the normal nodes

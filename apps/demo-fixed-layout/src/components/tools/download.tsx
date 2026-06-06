@@ -10,6 +10,8 @@ import { FlowDownloadFormat, FlowDownloadService } from '@flowgram.ai/export-plu
 import { IconButton, Toast, Dropdown, Tooltip } from '@douyinfe/semi-ui';
 import { IconFilledArrowDown } from '@douyinfe/semi-icons';
 
+import { t } from '../../i18n';
+
 const formatOptions = [
   {
     label: 'PNG',
@@ -56,7 +58,7 @@ export const DownloadTool: FC = () => {
       format,
     });
     const formatOption = formatOptions.find((option) => option.value === format);
-    Toast.success(`Download ${formatOption?.label} successfully`);
+    Toast.success(t('Download {{format}} successfully', { format: formatOption?.label }));
   };
 
   const button = (
@@ -94,7 +96,7 @@ export const DownloadTool: FC = () => {
         button
       ) : (
         <div>
-          <Tooltip content="Download">{button}</Tooltip>
+          <Tooltip content={t('Download')}>{button}</Tooltip>
         </div>
       )}
     </Dropdown>

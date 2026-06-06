@@ -23,6 +23,7 @@ import {
 } from '@douyinfe/semi-icons';
 
 import { writeData } from '../../shortcuts/utils';
+import { t } from '../../i18n';
 import { IconUngroupOutlined } from './icons';
 
 interface GroupToolsProps {
@@ -63,7 +64,7 @@ export const GroupTools: FC<GroupToolsProps> = (props) => {
       }}
     >
       <ButtonGroup size="small" theme="borderless" style={{ display: 'flex', flexWrap: 'nowrap' }}>
-        <Tooltip content="Drag">
+        <Tooltip content={t('Drag')}>
           <Button
             style={{ ...buttonStyle, cursor: 'grab' }}
             icon={<IconHandle />}
@@ -79,7 +80,7 @@ export const GroupTools: FC<GroupToolsProps> = (props) => {
           />
         </Tooltip>
 
-        <Tooltip content={groupController?.collapsed ? 'Expand' : 'Collapse'}>
+        <Tooltip content={groupController?.collapsed ? t('Expand') : t('Collapse')}>
           <Button
             style={buttonStyle}
             icon={groupController?.collapsed ? <IconExpand /> : <IconShrink />}
@@ -98,7 +99,7 @@ export const GroupTools: FC<GroupToolsProps> = (props) => {
             }}
           />
         </Tooltip>
-        <Tooltip content="Ungroup">
+        <Tooltip content={t('Ungroup')}>
           <Button
             style={buttonStyle}
             icon={<IconUngroupOutlined />}
@@ -109,7 +110,7 @@ export const GroupTools: FC<GroupToolsProps> = (props) => {
             }}
           />
         </Tooltip>
-        <Tooltip content="Copy">
+        <Tooltip content={t('Copy')}>
           <Button
             icon={<IconCopy />}
             style={buttonStyle}
@@ -120,12 +121,12 @@ export const GroupTools: FC<GroupToolsProps> = (props) => {
 
               writeData([nodeJSON], clipboard);
               Toast.success({
-                content: 'Copied. You can move to any [+] to paste.',
+                content: t('Copied. You can move to any [+] to paste.'),
               });
             }}
           />
         </Tooltip>
-        <Tooltip content="Delete">
+        <Tooltip content={t('Delete')}>
           <Button
             style={buttonStyle}
             type="primary"

@@ -12,6 +12,7 @@ import { IconCopyAdd, IconPlusCircle } from '@douyinfe/semi-icons';
 
 import { NodeList } from '../node-list';
 import { readData } from '../../shortcuts/utils';
+import { t } from '../../i18n';
 import { generateNodeId } from './utils';
 import { PasteIcon, Wrap } from './styles';
 
@@ -137,7 +138,7 @@ export default function Adder(props: {
           ''
         )}
         {activated && pasteIconVisible && (
-          <Popover position="top" showArrow content="Paste">
+          <Popover position="top" showArrow content={t('Paste')}>
             <PasteIcon
               onClick={handlePaste}
               style={

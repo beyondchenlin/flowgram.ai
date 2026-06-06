@@ -13,6 +13,7 @@ import { IconMore } from '@douyinfe/semi-icons';
 
 import { FlowNodeRegistry } from '../../typings';
 import { FlowCommandId } from '../../shortcuts/constants';
+import { t } from '../../i18n';
 import { useIsSidebar } from '../../hooks';
 import { NodeRenderContext } from '../../context';
 import { nodeFormPanelFactory } from '../../components/sidebar';
@@ -55,12 +56,12 @@ function DropdownContent(props: { updateTitleEdit: (editing: boolean) => void })
 
   return (
     <Dropdown.Menu>
-      <Dropdown.Item onClick={handleEditTitle}>Edit Title</Dropdown.Item>
+      <Dropdown.Item onClick={handleEditTitle}>{t('Edit Title')}</Dropdown.Item>
       <Dropdown.Item onClick={handleCopy} disabled={registry.meta!.copyDisable === true}>
-        Copy
+        {t('Copy')}
       </Dropdown.Item>
       <Dropdown.Item onClick={handleDelete} disabled={deleteDisabled}>
-        Delete
+        {t('Delete')}
       </Dropdown.Item>
     </Dropdown.Menu>
   );

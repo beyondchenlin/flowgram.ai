@@ -7,10 +7,12 @@ import { usePlaygroundTools } from '@flowgram.ai/fixed-layout-editor';
 import { Button, Tooltip } from '@douyinfe/semi-ui';
 import { IconServer } from '@douyinfe/semi-icons';
 
+import { t } from '../../i18n';
+
 export const SwitchVertical = () => {
   const tools = usePlaygroundTools();
   return (
-    <Tooltip content={!tools.isVertical ? 'Vertical Layout' : 'Horizontal Layout'}>
+    <Tooltip content={!tools.isVertical ? t('Vertical Layout') : t('Horizontal Layout')}>
       <Button
         theme="borderless"
         size="small"

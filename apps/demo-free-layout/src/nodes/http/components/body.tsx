@@ -11,12 +11,13 @@ import {
 } from '@flowgram.ai/form-materials';
 import { Select } from '@douyinfe/semi-ui';
 
+import { t } from '../../../i18n';
 import { useNodeRenderContext } from '../../../hooks';
 import { FormItem } from '../../../form-components';
 
 const BODY_TYPE_OPTIONS = [
   {
-    label: 'None',
+    label: t('None'),
     value: 'none',
   },
   {
@@ -24,7 +25,7 @@ const BODY_TYPE_OPTIONS = [
     value: 'JSON',
   },
   {
-    label: 'Raw Text',
+    label: t('Raw Text'),
     value: 'raw-text',
   },
 ];
@@ -57,7 +58,7 @@ export function Body() {
                 disableMarkdownHighlight
                 readonly={readonly}
                 style={{ flexGrow: 1 }}
-                placeholder="Input raw text, use var by '{'"
+                placeholder={t("Input raw text, use var by '{'")}
                 onChange={(value) => {
                   field.onChange(value!);
                 }}

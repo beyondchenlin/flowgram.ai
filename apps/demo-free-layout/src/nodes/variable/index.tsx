@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconVariable from '../../assets/icon-variable.png';
 import { formMeta } from './form-meta';
 
@@ -16,7 +17,7 @@ export const VariableNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.Variable,
   info: {
     icon: iconVariable,
-    description: 'Variable Assign and Declaration',
+    description: t('Variable assignment and declaration'),
   },
   meta: {
     size: {
@@ -29,7 +30,7 @@ export const VariableNodeRegistry: FlowNodeRegistry = {
       id: `variable_${nanoid(5)}`,
       type: 'variable',
       data: {
-        title: `Variable_${++index}`,
+        title: t('Variable_{{index}}', { index: ++index }),
         assign: [
           {
             operator: 'declare',

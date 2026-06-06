@@ -16,6 +16,7 @@ import {
 } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeJSON } from '../typings';
+import { t } from '../i18n';
 import { FormHeader, FormContent, FormInputs, FormOutputs } from '../form-components';
 
 export const renderForm = ({ form }: FormRenderProps<FlowNodeJSON['data']>) => (
@@ -51,7 +52,7 @@ export const defaultFormMeta: FormMeta<FlowNodeJSON['data']> = {
    * 2: validate as dynamic function: (values,  ctx) => ({ title: () => {}, ... })
    */
   validate: {
-    title: ({ value }) => (value ? undefined : 'Title is required'),
+    title: ({ value }) => (value ? undefined : t('Title is required')),
     'inputsValues.*': ({ value, context, formValues, name }) => {
       const valuePropetyKey = name.replace(/^inputsValues\./, '');
       const required = formValues.inputs?.required || [];
@@ -60,7 +61,7 @@ export const defaultFormMeta: FormMeta<FlowNodeJSON['data']> = {
         (value === '' || value === undefined || value?.content === '')
       ) {
         return {
-          message: `${valuePropetyKey} is required`,
+          message: t('{{name}} is required', { name: t(valuePropetyKey) }),
           level: FeedbackLevel.Error, // Error || Warning
         };
       }

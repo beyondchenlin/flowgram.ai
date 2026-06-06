@@ -8,6 +8,7 @@ import { nanoid } from 'nanoid';
 import { defaultFormMeta } from '../default-form-meta';
 import { AgentLLMNodeRegistry } from '../agent/agent-llm';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconLLM from '../../assets/icon-llm.jpg';
 
 let index = 0;
@@ -15,8 +16,9 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
   type: 'llm',
   info: {
     icon: iconLLM,
-    description:
-      'Call the large language model and use variables and prompt words to generate responses.',
+    description: t(
+      'Call the large language model and use variables and prompts to generate responses.'
+    ),
   },
   formMeta: defaultFormMeta,
   meta: {
@@ -30,7 +32,7 @@ export const LLMNodeRegistry: FlowNodeRegistry = {
       id: `llm_${nanoid(5)}`,
       type: 'llm',
       data: {
-        title: `LLM_${++index}`,
+        title: t('LLM_{{index}}', { index: ++index }),
         inputsValues: {
           modelType: {
             type: 'constant',

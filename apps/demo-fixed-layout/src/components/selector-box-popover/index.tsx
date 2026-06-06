@@ -24,6 +24,7 @@ import {
 
 import { FlowCommandId } from '../../shortcuts/constants';
 import { IconGroupOutlined } from '../../plugins/group-plugin/icons';
+import { t } from '../../i18n';
 
 const BUTTON_HEIGHT = 24;
 
@@ -77,7 +78,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
           style={{ display: 'flex', flexWrap: 'nowrap', height: BUTTON_HEIGHT }}
         >
           {draggable && (
-            <Tooltip content="Drag">
+            <Tooltip content={t('Drag')}>
               <Button
                 style={{ cursor: 'grab', height: BUTTON_HEIGHT }}
                 icon={<IconHandle />}
@@ -94,7 +95,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
             </Tooltip>
           )}
 
-          <Tooltip content={'Collapse'}>
+          <Tooltip content={t('Collapse')}>
             <Button
               icon={<IconShrink />}
               style={{ height: BUTTON_HEIGHT }}
@@ -106,7 +107,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content={'Expand'}>
+          <Tooltip content={t('Expand')}>
             <Button
               icon={<IconExpand />}
               style={{ height: BUTTON_HEIGHT }}
@@ -118,7 +119,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content={'Group'}>
+          <Tooltip content={t('Group')}>
             <Button
               icon={<IconGroupOutlined />}
               type="primary"
@@ -133,7 +134,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content={'Copy'}>
+          <Tooltip content={t('Copy')}>
             <Button
               icon={<IconCopy />}
               style={{ height: BUTTON_HEIGHT }}
@@ -145,7 +146,7 @@ export const SelectorBoxPopover: FunctionComponent<SelectorBoxPopoverProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content={'Delete'}>
+          <Tooltip content={t('Delete')}>
             <Button
               type="primary"
               theme="solid"

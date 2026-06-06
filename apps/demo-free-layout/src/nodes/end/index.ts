@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconEnd from '../../assets/icon-end.jpg';
 import { formMeta } from './form-meta';
-import { WorkflowNodeType } from '../constants';
 
 export const EndNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.End,
@@ -22,8 +23,9 @@ export const EndNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconEnd,
-    description:
-      'The final node of the workflow, used to return the result information after the workflow is run.',
+    description: t(
+      'Workflow end node, used to return the result information after the workflow runs.'
+    ),
   },
   /**
    * Render node via formMeta

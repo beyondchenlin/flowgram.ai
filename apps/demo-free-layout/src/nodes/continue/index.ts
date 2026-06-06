@@ -5,10 +5,11 @@
 
 import { nanoid } from 'nanoid';
 
+import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconContinue from '../../assets/icon-continue.jpg';
 import { formMeta } from './form-meta';
-import { WorkflowNodeType } from '../constants';
 
 let index = 0;
 export const ContinueNodeRegistry: FlowNodeRegistry = {
@@ -25,8 +26,7 @@ export const ContinueNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconContinue,
-    description:
-      'The final node of the workflow, used to return the result information after the workflow is run.',
+    description: t('Skip the remaining steps of the current loop and continue the next loop.'),
   },
   /**
    * Render node via formMeta
@@ -37,7 +37,7 @@ export const ContinueNodeRegistry: FlowNodeRegistry = {
       id: `continue_${nanoid(5)}`,
       type: 'continue',
       data: {
-        title: `Continue_${++index}`,
+        title: t('Continue_{{index}}', { index: ++index }),
       },
     };
   },

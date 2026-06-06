@@ -4,6 +4,7 @@
  */
 
 import { FlowDocumentJSON } from './typings';
+import { t } from './i18n';
 
 export const initialData: FlowDocumentJSON = {
   nodes: [
@@ -12,7 +13,7 @@ export const initialData: FlowDocumentJSON = {
       type: 'start',
       blocks: [],
       data: {
-        title: 'Start',
+        title: t('Start'),
         outputs: {
           type: 'object',
           properties: {
@@ -46,7 +47,7 @@ export const initialData: FlowDocumentJSON = {
       id: 'agent_0',
       type: 'agent',
       data: {
-        title: 'Agent',
+        title: t('Agent'),
       },
       blocks: [
         {
@@ -60,7 +61,7 @@ export const initialData: FlowDocumentJSON = {
                 defaultExpanded: false,
               },
               data: {
-                title: 'LLM',
+                title: t('LLM'),
                 inputsValues: {
                   modelType: {
                     type: 'constant',
@@ -120,7 +121,7 @@ export const initialData: FlowDocumentJSON = {
                 defaultExpanded: false,
               },
               data: {
-                title: 'Memory',
+                title: t('Memory'),
               },
             },
           ],
@@ -133,14 +134,14 @@ export const initialData: FlowDocumentJSON = {
               id: 'tool_0',
               type: 'tool',
               data: {
-                title: 'Tool0',
+                title: t('Tool{{index}}', { index: 0 }),
               },
             },
             {
               id: 'tool_1',
               type: 'tool',
               data: {
-                title: 'Tool1',
+                title: t('Tool{{index}}', { index: 1 }),
               },
             },
           ],
@@ -152,7 +153,7 @@ export const initialData: FlowDocumentJSON = {
       type: 'llm',
       blocks: [],
       data: {
-        title: 'LLM',
+        title: t('LLM'),
         inputsValues: {
           modelType: {
             type: 'constant',
@@ -203,7 +204,7 @@ export const initialData: FlowDocumentJSON = {
       id: 'switch_0',
       type: 'switch',
       data: {
-        title: 'Switch',
+        title: t('Switch'),
         outputs: {
           type: 'object',
           properties: {
@@ -216,7 +217,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'case_0',
           type: 'case',
           data: {
-            title: 'Case_0',
+            title: t('Case_{{index}}', { index: 0 }),
             inputsValues: {
               condition: { type: 'constant', content: true },
             },
@@ -236,7 +237,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'case_1',
           type: 'case',
           data: {
-            title: 'Case_1',
+            title: t('Case_{{index}}', { index: 1 }),
             inputsValues: {
               condition: { type: 'constant', content: true },
             },
@@ -255,7 +256,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'case_default_1',
           type: 'caseDefault',
           data: {
-            title: 'Default',
+            title: t('Default Branch'),
           },
           blocks: [],
         },
@@ -265,7 +266,7 @@ export const initialData: FlowDocumentJSON = {
       id: 'loop_0',
       type: 'loop',
       data: {
-        title: 'Loop',
+        title: t('Loop'),
         loopFor: {
           type: 'ref',
           content: ['start_0', 'array_obj'],
@@ -276,7 +277,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'if_0',
           type: 'if',
           data: {
-            title: 'If',
+            title: t('If'),
             inputsValues: {
               condition: { type: 'constant', content: true },
             },
@@ -295,7 +296,7 @@ export const initialData: FlowDocumentJSON = {
               id: 'if_true',
               type: 'ifBlock',
               data: {
-                title: 'true',
+                title: t('True Branch'),
               },
               blocks: [],
             },
@@ -303,14 +304,14 @@ export const initialData: FlowDocumentJSON = {
               id: 'if_false',
               type: 'ifBlock',
               data: {
-                title: 'false',
+                title: t('False Branch'),
               },
               blocks: [
                 {
                   id: 'break_0',
                   type: 'breakLoop',
                   data: {
-                    title: 'BreakLoop',
+                    title: t('BreakLoop'),
                   },
                 },
               ],
@@ -323,7 +324,7 @@ export const initialData: FlowDocumentJSON = {
       id: 'tryCatch_0',
       type: 'tryCatch',
       data: {
-        title: 'TryCatch',
+        title: t('TryCatch'),
       },
       blocks: [
         {
@@ -335,7 +336,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'catchBlock_0',
           type: 'catchBlock',
           data: {
-            title: 'Catch Block 1',
+            title: t('Catch Block {{index}}', { index: 1 }),
             inputsValues: {
               condition: { type: 'constant', content: true },
             },
@@ -355,7 +356,7 @@ export const initialData: FlowDocumentJSON = {
           id: 'catchBlock_1',
           type: 'catchBlock',
           data: {
-            title: 'Catch Block 2',
+            title: t('Catch Block {{index}}', { index: 2 }),
             inputsValues: {
               condition: { type: 'constant', content: true },
             },
@@ -378,7 +379,7 @@ export const initialData: FlowDocumentJSON = {
       type: 'end',
       blocks: [],
       data: {
-        title: 'End',
+        title: t('End'),
         inputsValues: {
           success: { type: 'constant', content: true, schema: { type: 'boolean' } },
         },

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { t } from '../../../../i18n';
 import { useControlTips } from './use-control';
 import { GroupTipsStyle } from './style';
 import { isMacOS } from './is-mac-os';
@@ -19,7 +20,9 @@ export const GroupTips = () => {
     <GroupTipsStyle className={'workflow-group-tips'}>
       <div className="container">
         <div className="content">
-          <p className="text">{`Hold ${isMacOS ? 'Cmd ⌘' : 'Ctrl'} to drag node out`}</p>
+          <p className="text">
+            {t('Hold {{key}} to drag node out', { key: isMacOS ? 'Cmd ⌘' : 'Ctrl' })}
+          </p>
           <div
             className="space"
             style={{
@@ -29,7 +32,7 @@ export const GroupTips = () => {
         </div>
         <div className="actions">
           <p className="close-forever" onClick={closeForever}>
-            Never Remind
+            {t('Never Remind')}
           </p>
           <div className="close" onClick={close}>
             <IconClose />

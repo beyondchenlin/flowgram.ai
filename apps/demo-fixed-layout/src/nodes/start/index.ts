@@ -4,6 +4,7 @@
  */
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconStart from '../../assets/icon-start.jpg';
 import { formMeta } from './form-meta';
 
@@ -19,8 +20,9 @@ export const StartNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconStart,
-    description:
-      'The starting node of the workflow, used to set the information needed to initiate the workflow.',
+    description: t(
+      'Workflow start node, used to set the information required to start the workflow.'
+    ),
   },
   /**
    * Render node via formMeta

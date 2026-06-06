@@ -12,8 +12,8 @@ import { FormRenderProps, FormMeta, ValidateTrigger } from '@flowgram.ai/free-la
 import { autoRenameRefEffect } from '@flowgram.ai/form-materials';
 
 import { FlowNodeJSON } from '../../typings';
+import { t } from '../../i18n';
 import { FormHeader, FormContent } from '../../form-components';
-
 import { ConditionInputs } from './condition-inputs';
 
 export const renderForm = ({ form }: FormRenderProps<FlowNodeJSON>) => (
@@ -29,13 +29,11 @@ export const formMeta: FormMeta<FlowNodeJSON> = {
   render: renderForm,
   validateTrigger: ValidateTrigger.onChange,
   validate: {
-    title: ({ value }: { value: string }) => (value ? undefined : 'Title is required'),
+    title: ({ value }: { value: string }) => (value ? undefined : t('Title is required')),
     'branch.*': ({ value }) => {
       const haveEmptyCondition =
-        value.conditions.filter((item: any) => {
-          return Object.keys(item.value).length === 0;
-        }).length > 0;
-      if (haveEmptyCondition) return 'Condition is required';
+        value.conditions.filter((item: any) => Object.keys(item.value).length === 0).length > 0;
+      if (haveEmptyCondition) return t('Condition is required');
       return undefined;
     },
   },

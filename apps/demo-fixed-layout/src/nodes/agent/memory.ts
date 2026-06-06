@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { defaultFormMeta } from '../default-form-meta';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconMemory from '../../assets/icon-memory.svg';
 
 let index = 0;
@@ -14,7 +15,7 @@ export const MemoryNodeRegistry: FlowNodeRegistry = {
   type: 'memory',
   info: {
     icon: iconMemory,
-    description: 'Memory.',
+    description: t('Memory.'),
   },
   meta: {
     addDisable: true,
@@ -29,7 +30,7 @@ export const MemoryNodeRegistry: FlowNodeRegistry = {
       id: `memory_${nanoid(5)}`,
       type: 'memory',
       data: {
-        title: `Memory_${++index}`,
+        title: t('Memory_{{index}}', { index: ++index }),
       },
     };
   },

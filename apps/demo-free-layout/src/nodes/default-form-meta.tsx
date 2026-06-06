@@ -16,6 +16,7 @@ import {
 import { Divider } from '@douyinfe/semi-ui';
 
 import { FlowNodeJSON } from '../typings';
+import { t } from '../i18n';
 import { FormHeader, FormContent, FormInputs } from '../form-components';
 
 export const renderForm = ({ form }: FormRenderProps<FlowNodeJSON>) => (
@@ -38,7 +39,7 @@ export const defaultFormMeta: FormMeta<FlowNodeJSON> = {
    * 2: validate as dynamic function: (values,  ctx) => ({ title: () => {}, ... })
    */
   validate: {
-    title: ({ value }) => (value ? undefined : 'Title is required'),
+    title: ({ value }) => (value ? undefined : t('Title is required')),
     'inputsValues.*': ({ value, context, formValues, name }) => {
       const valuePropertyKey = name.replace(/^inputsValues\./, '');
       const required = formValues.inputs?.required || [];
@@ -47,7 +48,7 @@ export const defaultFormMeta: FormMeta<FlowNodeJSON> = {
         node: context.node,
         required: required.includes(valuePropertyKey),
         errorMessages: {
-          required: `${valuePropertyKey} is required`,
+          required: t('{{name}} is required', { name: t(valuePropertyKey) }),
         },
       });
     },

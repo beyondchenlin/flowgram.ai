@@ -12,6 +12,7 @@ import { IconUndo, IconRedo } from '@douyinfe/semi-icons';
 
 import { TestRunButton } from '../testrun/testrun-button';
 import { AddNode } from '../add-node';
+import { t } from '../../i18n';
 import { ZoomSelect } from './zoom-select';
 import { SwitchLine } from './switch-line';
 import { ToolContainer, ToolSection } from './styles';
@@ -56,7 +57,7 @@ export const DemoTools = () => {
         <Minimap visible={minimapVisible} />
         <Readonly />
         <Comment />
-        <Tooltip content="Undo">
+        <Tooltip content={t('Undo')}>
           <IconButton
             type="tertiary"
             theme="borderless"
@@ -65,7 +66,7 @@ export const DemoTools = () => {
             onClick={() => history.undo()}
           />
         </Tooltip>
-        <Tooltip content="Redo">
+        <Tooltip content={t('Redo')}>
           <IconButton
             type="tertiary"
             theme="borderless"

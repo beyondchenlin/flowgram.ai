@@ -12,6 +12,7 @@ import { IconSpin } from '@douyinfe/semi-icons';
 
 import { NodeStatusHeader } from '../header';
 import { NodeStatusGroup } from '../group';
+import { t } from '../../../../i18n';
 import { IconWarningFill } from '../../../../assets/icon-warning';
 import { IconSuccessFill } from '../../../../assets/icon-success';
 
@@ -62,15 +63,15 @@ export const NodeStatusRender: FC<NodeStatusRenderProps> = ({ report }) => {
   const renderDesc = () => {
     const getDesc = () => {
       if (isNodeProcessing) {
-        return 'Running';
+        return t('Running');
       } else if (isNodePending) {
-        return 'Run terminated';
+        return t('Run terminated');
       } else if (isNodeSucceed) {
-        return 'Succeed';
+        return t('Succeed');
       } else if (isNodeFailed) {
-        return 'Failed';
+        return t('Failed');
       } else if (isNodeCancelled) {
-        return 'Cancelled';
+        return t('Cancelled');
       }
     };
 
@@ -89,7 +90,9 @@ export const NodeStatusRender: FC<NodeStatusRenderProps> = ({ report }) => {
       return null;
     }
 
-    const count = <p className={styles.count}>Total: {snapshots.length}</p>;
+    const count = (
+      <p className={styles.count}>{t('Total: {{count}}', { count: snapshots.length })}</p>
+    );
 
     if (snapshots.length <= displayCount) {
       return (
@@ -177,10 +180,10 @@ export const NodeStatusRender: FC<NodeStatusRenderProps> = ({ report }) => {
           <div className={styles.error}>{currentSnapshot.error}</div>
         )}
         {renderSnapshotNavigation()}
-        <NodeStatusGroup title="Inputs" data={currentSnapshot?.inputs} />
-        <NodeStatusGroup title="Outputs" data={currentSnapshot?.outputs} />
-        <NodeStatusGroup title="Branch" data={currentSnapshot?.branch} optional />
-        <NodeStatusGroup title="Data" data={currentSnapshot?.data} optional />
+        <NodeStatusGroup title={t('Inputs')} data={currentSnapshot?.inputs} />
+        <NodeStatusGroup title={t('Outputs')} data={currentSnapshot?.outputs} />
+        <NodeStatusGroup title={t('Branch')} data={currentSnapshot?.branch} optional />
+        <NodeStatusGroup title={t('Data')} data={currentSnapshot?.data} optional />
       </div>
     </NodeStatusHeader>
   );

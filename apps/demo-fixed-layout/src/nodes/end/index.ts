@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { FlowNodeBaseType } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconEnd from '../../assets/icon-end.jpg';
 import { formMeta } from './form-meta';
 
@@ -20,8 +21,9 @@ export const EndNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconEnd,
-    description:
-      'The final node of the workflow, used to return the result information after the workflow is run.',
+    description: t(
+      'Workflow end node, used to return the result information after the workflow runs.'
+    ),
   },
   /**
    * Render node via formMeta
@@ -66,7 +68,7 @@ export const EndNodeRegistry: FlowNodeRegistry = {
       id: `end_${nanoid()}`,
       type: 'end',
       data: {
-        title: 'End',
+        title: t('End'),
         outputs: {
           type: 'object',
           properties: {

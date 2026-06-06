@@ -6,6 +6,7 @@
 import { nanoid } from 'nanoid';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconCase from '../../assets/icon-case.png';
 import { formMeta } from './form-meta';
 
@@ -18,7 +19,7 @@ export const CatchBlockNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: iconCase,
-    description: 'Execute the catch branch when the condition is met.',
+    description: t('Execute this catch branch when the condition is met.'),
   },
   canAdd: () => false,
   canDelete: (ctx, node) => node.parent!.blocks.length >= 2,
@@ -27,7 +28,7 @@ export const CatchBlockNodeRegistry: FlowNodeRegistry = {
       id: `Catch_${nanoid(5)}`,
       type: 'catchBlock',
       data: {
-        title: `Catch Block ${id++}`,
+        title: t('Catch Block {{index}}', { index: id++ }),
         inputs: {
           type: 'object',
           required: ['condition'],

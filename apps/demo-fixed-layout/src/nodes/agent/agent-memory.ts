@@ -6,6 +6,7 @@
 import { FlowNodeBaseType } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 
 export const AgentMemoryNodeRegistry: FlowNodeRegistry = {
   type: 'agentMemory',
@@ -16,6 +17,6 @@ export const AgentMemoryNodeRegistry: FlowNodeRegistry = {
   },
   info: {
     icon: '',
-    description: 'Agent Memory.',
+    description: t('Agent Memory.'),
   },
 };

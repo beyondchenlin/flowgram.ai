@@ -14,6 +14,8 @@ import {
 } from '@flowgram.ai/fixed-layout-editor';
 import { Button } from '@douyinfe/semi-ui';
 
+import { t } from '../../i18n';
+
 const styleElement = document.createElement('style');
 const RUNNING_COLOR = 'rgb(78, 64, 229)';
 const RUNNING_INTERVAL = 1000;
@@ -107,7 +109,7 @@ export function Run() {
   };
   return (
     <Button onClick={onRun} loading={isRunning}>
-      Run
+      {t('Run')}
     </Button>
   );
 }

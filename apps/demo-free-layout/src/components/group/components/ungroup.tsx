@@ -9,6 +9,7 @@ import { CommandRegistry, useService, WorkflowNodeEntity } from '@flowgram.ai/fr
 import { WorkflowGroupCommand } from '@flowgram.ai/free-group-plugin';
 import { Button, Tooltip } from '@douyinfe/semi-ui';
 
+import { t } from '../../../i18n';
 import { IconUngroup } from './icon-group';
 
 interface UngroupButtonProps {
@@ -19,7 +20,7 @@ interface UngroupButtonProps {
 export const UngroupButton: FC<UngroupButtonProps> = ({ node, style }) => {
   const commandRegistry = useService(CommandRegistry);
   return (
-    <Tooltip content="Ungroup">
+    <Tooltip content={t('Ungroup')}>
       <div className="workflow-group-ungroup" style={style}>
         <Button
           icon={<IconUngroup size={14} />}

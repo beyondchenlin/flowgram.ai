@@ -46,46 +46,60 @@ npm start
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🖥️ 本地部署完整中文文档站（局域网访问）
+## 🖥️ 本地二次开发启动（中文画布 + 局域网访问）
 
-如果需要一个完整入口来查看 FlowGram 的中文文档、自由布局、固定布局、物料和 API，请部署 `apps/docs` 文档站，而不是单独部署 `apps/demo-free-layout`。单个 demo 只展示某一种布局，且部分节点文案是英文示例数据。
+二次开发请启动 dev server，不要只用 `serve dist`。当前 fork 保留完整中文文档入口，同时把两种画布 demo 单独跑起来：
 
-1. 使用符合仓库要求的 Node.js 版本：
+- `3001`：完整中文文档站
+- `3002`：固定布局画布 demo
+- `3003`：自由布局画布 demo
+
+先准备环境：
 
 ```sh
 cd /Users/wangyanxiang/Documents/code/flowgram
 source ~/.nvm/nvm.sh
 nvm use 22.19.0
-```
-
-2. 安装依赖并构建文档站相关包：
-
-```sh
 node common/scripts/install-run-rush.js install
-node common/scripts/install-run-rush.js build --to @flowgram.ai/docs
 ```
 
-3. 生成生产版中文文档站：
+终端 1：监听并编译除 docs 以外的包。
 
 ```sh
-cd apps/docs
-node ../../common/scripts/install-run-rushx.js build
+cd /Users/wangyanxiang/Documents/code/flowgram
+source ~/.nvm/nvm.sh
+nvm use 22.19.0
+node common/scripts/install-run-rush.js build:watch --to-except @flowgram.ai/docs
 ```
 
-4. 使用 PM2 在后台长期运行，并监听局域网地址：
+终端 2：启动完整中文文档站。
 
 ```sh
-npm install -g pm2 serve
-
-pm2 delete flowgram-docs 2>/dev/null || true
-pm2 start "$(which serve)" --name flowgram-docs -- \
-  -s /Users/wangyanxiang/Documents/code/flowgram/apps/docs/doc_build \
-  -l tcp://0.0.0.0:3001
-
-pm2 save
+cd /Users/wangyanxiang/Documents/code/flowgram/apps/docs
+source ~/.nvm/nvm.sh
+nvm use 22.19.0
+node ../../common/scripts/install-run-rushx.js dev --host 0.0.0.0 --port 3001
 ```
 
-5. 查看本机局域网 IP：
+终端 3：启动固定布局画布。
+
+```sh
+cd /Users/wangyanxiang/Documents/code/flowgram/apps/demo-fixed-layout
+source ~/.nvm/nvm.sh
+nvm use 22.19.0
+MODE=app NODE_ENV=development ./node_modules/.bin/rsbuild dev --host 0.0.0.0 --port 3002
+```
+
+终端 4：启动自由布局画布。
+
+```sh
+cd /Users/wangyanxiang/Documents/code/flowgram/apps/demo-free-layout
+source ~/.nvm/nvm.sh
+nvm use 22.19.0
+MODE=app NODE_ENV=development ./node_modules/.bin/rsbuild dev --host 0.0.0.0 --port 3003
+```
+
+查看本机局域网 IP：
 
 ```sh
 ipconfig getifaddr en0
@@ -93,31 +107,37 @@ ipconfig getifaddr en0
 
 如果输出为 `192.168.1.127`，同一局域网设备访问：
 
-```text
-http://192.168.1.127:3001/
-```
+- `http://192.168.1.127:3001/`：完整中文文档站
+- `http://192.168.1.127:3002/`：固定布局画布
+- `http://192.168.1.127:3003/`：自由布局画布
 
-常用入口：
-
-- 中文首页：`http://192.168.1.127:3001/`
-- 自由布局示例：`http://192.168.1.127:3001/examples/free-layout/free-feature-overview`
-- 固定布局示例：`http://192.168.1.127:3001/examples/fixed-layout/fixed-feature-overview`
-- 英文文档：`http://192.168.1.127:3001/en/`
-
-常用 PM2 命令：
-
-```sh
-pm2 status
-pm2 logs flowgram-docs
-pm2 restart flowgram-docs
-pm2 stop flowgram-docs
-```
-
-如果 `3001` 被占用，可以先停止占用进程：
+如果端口被占用：
 
 ```sh
 lsof -tiTCP:3001 -sTCP:LISTEN | xargs kill
+lsof -tiTCP:3002 -sTCP:LISTEN | xargs kill
+lsof -tiTCP:3003 -sTCP:LISTEN | xargs kill
 ```
+
+### Demo i18n 规则
+
+当前 demo 默认使用 `zh-CN`，也可以通过 URL 切英文，例如 `http://192.168.1.127:3003/?locale=en-US`。
+
+新增节点名、节点说明、表单校验、工具栏和试运行面板文案不要再硬编码中文或英文，统一放到：
+
+- `apps/demo-free-layout/src/i18n/demo-languages.ts`
+- `apps/demo-fixed-layout/src/i18n/demo-languages.ts`
+
+代码里使用英文 key：
+
+```ts
+import { t } from '../../i18n';
+
+title: t('LLM_{{index}}', { index: 1 });
+description: t('Call the large language model and use variables and prompts to generate responses.');
+```
+
+变量 key 如 `query`、`result`、`array_obj` 属于流程数据字段，不建议直接改成中文；需要中文展示时，在 i18n 语言包里给显示层加映射。
 
 ## ✨ Features
 

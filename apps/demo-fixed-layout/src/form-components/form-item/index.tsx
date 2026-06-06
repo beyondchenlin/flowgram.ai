@@ -9,6 +9,7 @@ import { DisplaySchemaTag } from '@flowgram.ai/form-materials';
 import { Typography, Tooltip } from '@douyinfe/semi-ui';
 
 import './index.css';
+import { t } from '../../i18n';
 
 const { Text } = Typography;
 
@@ -34,7 +35,7 @@ export function FormItem({
     (showTooltip?: boolean) => (
       <div style={{ width: '0', display: 'flex', flex: '1' }}>
         <Text style={{ width: '100%' }} ellipsis={{ showTooltip: !!showTooltip }}>
-          {name}
+          {t(name)}
         </Text>
         {required && <span style={{ color: '#f93920', paddingLeft: '2px' }}>*</span>}
       </div>

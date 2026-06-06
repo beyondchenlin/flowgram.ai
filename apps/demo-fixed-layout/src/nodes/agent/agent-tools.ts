@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { FlowNodeBaseType } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 
 let index = 0;
 export const AgentToolsNodeRegistry: FlowNodeRegistry = {
@@ -14,7 +15,7 @@ export const AgentToolsNodeRegistry: FlowNodeRegistry = {
   extend: FlowNodeBaseType.SLOT_BLOCK,
   info: {
     icon: '',
-    description: 'Agent Tools.',
+    description: t('Agent Tools.'),
   },
   meta: {
     addDisable: true,
@@ -25,7 +26,7 @@ export const AgentToolsNodeRegistry: FlowNodeRegistry = {
       id: `tool_${nanoid(5)}`,
       type: 'agentTool',
       data: {
-        title: `Tool_${++index}`,
+        title: t('Tool_{{index}}', { index: ++index }),
         outputs: {
           type: 'object',
           properties: {

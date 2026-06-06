@@ -9,6 +9,7 @@ import { usePlayground, usePlaygroundTools, useRefresh } from '@flowgram.ai/fixe
 import { Tooltip, IconButton } from '@douyinfe/semi-ui';
 import { IconUndo, IconRedo } from '@douyinfe/semi-icons';
 
+import { t } from '../../i18n';
 import { ZoomSelect } from './zoom-select';
 import { SwitchVertical } from './switch-vertical';
 import { ToolContainer, ToolSection } from './styles';
@@ -42,7 +43,7 @@ export const DemoTools = () => {
         <MinimapSwitch minimapVisible={minimapVisible} setMinimapVisible={setMinimapVisible} />
         <Minimap visible={minimapVisible} />
         <Readonly />
-        <Tooltip content="Undo">
+        <Tooltip content={t('Undo')}>
           <IconButton
             theme="borderless"
             icon={<IconUndo />}
@@ -50,7 +51,7 @@ export const DemoTools = () => {
             onClick={() => tools.undo()}
           />
         </Tooltip>
-        <Tooltip content="Redo">
+        <Tooltip content={t('Redo')}>
           <IconButton
             theme="borderless"
             icon={<IconRedo />}

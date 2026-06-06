@@ -6,6 +6,7 @@
 import { nanoid } from 'nanoid';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconTryCatch from '../../assets/icon-trycatch.svg';
 import { formMeta } from './form-meta';
 
@@ -13,7 +14,7 @@ export const TryCatchNodeRegistry: FlowNodeRegistry = {
   type: 'tryCatch',
   info: {
     icon: iconTryCatch,
-    description: 'try catch.',
+    description: t('Catch and handle errors.'),
   },
   meta: {
     expandable: false, // disable expanded
@@ -24,7 +25,7 @@ export const TryCatchNodeRegistry: FlowNodeRegistry = {
       id: `tryCatch${nanoid(5)}`,
       type: 'tryCatch',
       data: {
-        title: 'TryCatch',
+        title: t('TryCatch'),
       },
       blocks: [
         {
@@ -37,7 +38,7 @@ export const TryCatchNodeRegistry: FlowNodeRegistry = {
           type: 'catchBlock',
           blocks: [],
           data: {
-            title: 'Catch Block 1',
+            title: t('Catch Block {{index}}', { index: 1 }),
             inputsValues: {
               condition: '',
             },

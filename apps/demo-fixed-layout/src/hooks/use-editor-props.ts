@@ -25,6 +25,7 @@ import { shortcutGetter } from '../shortcuts';
 import { CustomService } from '../services';
 import { GroupBoxHeader, GroupNode } from '../plugins/group-plugin';
 import { createClipboardPlugin, createVariablePanelPlugin } from '../plugins';
+import { demoI18nOptions, t } from '../i18n';
 import { nodeFormPanelFactory } from '../components/sidebar';
 import { SelectorBoxPopover } from '../components/selector-box-popover';
 import NodeAdder from '../components/node-adder';
@@ -198,13 +199,14 @@ export function useEditorProps(
         },
         renderDefaultNode: BaseNode, // node render
         renderTexts: {
-          'loop-end-text': 'Loop End',
-          'loop-traverse-text': 'Loop',
-          'try-start-text': 'Try Start',
-          'try-end-text': 'Try End',
-          'catch-text': 'Catch Error',
+          'loop-end-text': t('Loop End'),
+          'loop-traverse-text': t('Loop'),
+          'try-start-text': t('Try Start'),
+          'try-end-text': t('Try End'),
+          'catch-text': t('Catch Error'),
         },
       },
+      i18n: demoI18nOptions,
       /**
        * Bind custom service
        */

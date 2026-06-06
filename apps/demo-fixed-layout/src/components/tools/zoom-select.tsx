@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { usePlaygroundTools } from '@flowgram.ai/fixed-layout-editor';
 import { Divider, Dropdown } from '@douyinfe/semi-ui';
 
+import { t } from '../../i18n';
 import { SelectZoom } from './styles';
 
 export const ZoomSelect = () => {
@@ -21,8 +22,8 @@ export const ZoomSelect = () => {
       onClickOutSide={() => openDropDown(false)}
       render={
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => tools.zoomin()}>Zoomin</Dropdown.Item>
-          <Dropdown.Item onClick={() => tools.zoomout()}>Zoomout</Dropdown.Item>
+          <Dropdown.Item onClick={() => tools.zoomin()}>{t('Zoomin')}</Dropdown.Item>
+          <Dropdown.Item onClick={() => tools.zoomout()}>{t('Zoomout')}</Dropdown.Item>
           <Divider layout="horizontal" />
           <Dropdown.Item onClick={() => tools.updateZoom(0.5)}>50%</Dropdown.Item>
           <Dropdown.Item onClick={() => tools.updateZoom(1)}>100%</Dropdown.Item>

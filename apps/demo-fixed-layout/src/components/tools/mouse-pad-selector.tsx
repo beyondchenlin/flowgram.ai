@@ -7,6 +7,7 @@ import React, { type CSSProperties, useState } from 'react';
 
 import { Popover, Typography } from '@douyinfe/semi-ui';
 
+import { t } from '../../i18n';
 import { IconPad, IconPadTool } from '../../assets/icon-pad';
 import { IconMouse, IconMouseTool } from '../../assets/icon-mouse';
 
@@ -81,11 +82,13 @@ export const MousePadSelector: React.FC<
       spacing={20}
       content={
         <div className={'ui-mouse-pad-selector-popover'}>
-          <Typography.Title heading={4}>{'Interaction mode'}</Typography.Title>
+          <Typography.Title heading={4}>{t('Interaction mode')}</Typography.Title>
           <div className={'ui-mouse-pad-selector-popover-options'}>
             <InteractiveItem
-              title={'Mouse-Friendly'}
-              subTitle={'Drag the canvas with the left mouse button, zoom with the scroll wheel.'}
+              title={t('Mouse-Friendly')}
+              subTitle={t(
+                'Drag the canvas with the left mouse button, zoom with the scroll wheel.'
+              )}
               value={InteractiveType.Mouse}
               selected={value === InteractiveType.Mouse}
               icon={<IconMouse />}
@@ -93,10 +96,10 @@ export const MousePadSelector: React.FC<
             />
 
             <InteractiveItem
-              title={'Touchpad-Friendly'}
-              subTitle={
+              title={t('Touchpad-Friendly')}
+              subTitle={t(
                 'Drag with two fingers moving in the same direction, zoom by pinching or spreading two fingers.'
-              }
+              )}
               value={InteractiveType.Pad}
               selected={value === InteractiveType.Pad}
               icon={<IconPad />}

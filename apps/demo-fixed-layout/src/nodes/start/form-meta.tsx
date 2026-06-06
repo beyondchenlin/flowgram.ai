@@ -17,6 +17,7 @@ import {
 } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeJSON, JsonSchema } from '../../typings';
+import { t } from '../../i18n';
 import { useIsSidebar } from '../../hooks';
 import { FormHeader, FormContent, FormOutputs } from '../../form-components';
 
@@ -56,7 +57,7 @@ export const formMeta: FormMeta<FlowNodeJSON['data']> = {
   render: renderForm,
   validateTrigger: ValidateTrigger.onChange,
   validate: {
-    title: ({ value }: { value: string }) => (value ? undefined : 'Title is required'),
+    title: ({ value }: { value: string }) => (value ? undefined : t('Title is required')),
   },
   effect: {
     title: syncVariableTitle,

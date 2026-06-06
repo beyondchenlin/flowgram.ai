@@ -8,6 +8,7 @@ import { IconButton, Spin, Typography, Avatar, Tooltip } from '@douyinfe/semi-ui
 import { IconUploadError, IconClose } from '@douyinfe/semi-icons';
 
 import { useProblemPanel, useNodeFormPanel } from '../../plugins/panel-manager-plugin/hooks';
+import { t } from '../../i18n';
 import { useWatchValidate } from './use-watch-validate';
 
 export const ProblemPanel = () => {
@@ -38,7 +39,7 @@ export const ProblemPanel = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', columnGap: '4px', height: '100%' }}>
-          <Typography.Text strong>Problem</Typography.Text>
+          <Typography.Text strong>{t('Problem')}</Typography.Text>
           {loading && <Spin size="small" style={{ lineHeight: '0' }} />}
         </div>
         <IconButton
@@ -88,7 +89,7 @@ export const ProblemPanel = () => {
 export const ProblemButton = () => {
   const { open } = useProblemPanel();
   return (
-    <Tooltip content="Problem">
+    <Tooltip content={t('Problem')}>
       <IconButton
         type="tertiary"
         theme="borderless"

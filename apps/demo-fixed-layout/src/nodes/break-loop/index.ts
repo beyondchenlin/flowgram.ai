@@ -6,6 +6,7 @@
 import { nanoid } from 'nanoid';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconBreak from '../../assets/icon-break.svg';
 import { formMeta } from './form-meta';
 
@@ -17,7 +18,7 @@ export const BreakLoopNodeRegistry: FlowNodeRegistry = {
   extend: 'end',
   info: {
     icon: iconBreak,
-    description: 'Break in current Loop.',
+    description: t('Break out of the current loop.'),
   },
   meta: {
     style: {
@@ -40,7 +41,7 @@ export const BreakLoopNodeRegistry: FlowNodeRegistry = {
       id: `break_${nanoid()}`,
       type: 'breakLoop',
       data: {
-        title: 'BreakLoop',
+        title: t('BreakLoop'),
       },
     };
   },

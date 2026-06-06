@@ -11,6 +11,7 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 import { IJsonSchema, JsonSchemaUtils } from '@flowgram.ai/form-materials';
 
+import { t } from '../../i18n';
 import iconVariable from '../../assets/icon-variable.png';
 import { VariablePanelLayer } from './variable-panel-layer';
 
@@ -44,7 +45,7 @@ export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJs
         ASTFactory.createVariableDeclaration({
           key: 'global',
           meta: {
-            title: 'Global',
+            title: t('Global Variable'),
             icon: iconVariable,
           },
           type: JsonSchemaUtils.schemaToAST(opts.initialData),
@@ -57,7 +58,7 @@ export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJs
           ASTFactory.createVariableDeclaration({
             key: 'global',
             meta: {
-              title: 'Global',
+              title: t('Global Variable'),
               icon: iconVariable,
             },
             type: JsonSchemaUtils.schemaToAST(v),

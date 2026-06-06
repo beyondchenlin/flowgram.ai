@@ -6,6 +6,7 @@
 import { FormRenderProps, FormMeta, ValidateTrigger } from '@flowgram.ai/fixed-layout-editor';
 
 import { FlowNodeJSON } from '../../typings';
+import { t } from '../../i18n';
 import { FormHeader, FormContent, FormOutputs } from '../../form-components';
 
 export const renderForm = ({ form }: FormRenderProps<FlowNodeJSON['data']>) => (
@@ -21,6 +22,6 @@ export const formMeta: FormMeta<FlowNodeJSON['data']> = {
   render: renderForm,
   validateTrigger: ValidateTrigger.onChange,
   validate: {
-    title: ({ value }: { value: string }) => (value ? undefined : 'Title is required'),
+    title: ({ value }: { value: string }) => (value ? undefined : t('Title is required')),
   },
 };

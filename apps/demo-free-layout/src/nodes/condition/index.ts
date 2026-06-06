@@ -5,17 +5,17 @@
 
 import { nanoid } from 'nanoid';
 
+import { WorkflowNodeType } from '../constants';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconCondition from '../../assets/icon-condition.svg';
 import { formMeta } from './form-meta';
-import { WorkflowNodeType } from '../constants';
 
 export const ConditionNodeRegistry: FlowNodeRegistry = {
   type: WorkflowNodeType.Condition,
   info: {
     icon: iconCondition,
-    description:
-      'Connect multiple downstream branches. Only the corresponding branch will be executed if the set conditions are met.',
+    description: t('Connect multiple downstream branches and execute only the matched branch.'),
   },
   meta: {
     defaultPorts: [{ type: 'input' }],
@@ -33,7 +33,7 @@ export const ConditionNodeRegistry: FlowNodeRegistry = {
       id: `condition_${nanoid(5)}`,
       type: 'condition',
       data: {
-        title: 'Condition',
+        title: t('Condition'),
         conditions: [
           {
             key: `if_${nanoid(5)}`,

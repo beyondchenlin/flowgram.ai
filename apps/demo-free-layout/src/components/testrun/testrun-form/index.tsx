@@ -13,6 +13,7 @@ import { JsonValueEditor } from '../json-value-editor';
 import { useFormMeta } from '../hooks/use-form-meta';
 import { useFields } from '../hooks/use-fields';
 import { useSyncDefault } from '../hooks';
+import { t } from '../../../i18n';
 
 import styles from './index.module.less';
 
@@ -51,7 +52,7 @@ export const TestRunForm: FC<TestRunFormProps> = ({ values, setValues }) => {
               precision={0}
               value={field.value}
               onChange={(value) => field.onChange(value)}
-              placeholder="Please input integer"
+              placeholder={t('Please input integer')}
             />
           </div>
         );
@@ -61,7 +62,7 @@ export const TestRunForm: FC<TestRunFormProps> = ({ values, setValues }) => {
             <InputNumber
               value={field.value}
               onChange={(value) => field.onChange(value)}
-              placeholder="Please input number"
+              placeholder={t('Please input number')}
             />
           </div>
         );
@@ -83,7 +84,7 @@ export const TestRunForm: FC<TestRunFormProps> = ({ values, setValues }) => {
             <Input
               value={field.value}
               onChange={(value) => field.onChange(value)}
-              placeholder="Please input text"
+              placeholder={t('Please input text')}
             />
           </div>
         );
@@ -95,8 +96,8 @@ export const TestRunForm: FC<TestRunFormProps> = ({ values, setValues }) => {
     return (
       <div className={styles.formContainer}>
         <div className={styles.emptyState}>
-          <div className={styles.emptyText}>Empty</div>
-          <div className={styles.emptyText}>No inputs found in start node</div>
+          <div className={styles.emptyText}>{t('Empty')}</div>
+          <div className={styles.emptyText}>{t('No inputs found in start node')}</div>
         </div>
       </div>
     );
@@ -107,7 +108,7 @@ export const TestRunForm: FC<TestRunFormProps> = ({ values, setValues }) => {
       {fields.map((field) => (
         <div key={field.name} className={styles.fieldGroup}>
           <label htmlFor={field.name} className={styles.fieldLabel}>
-            {field.name}
+            {t(field.name)}
             {field.required && <span className={styles.requiredIndicator}>*</span>}
             <span className={styles.fieldTypeIndicator}>
               <DisplaySchemaTag

@@ -11,6 +11,7 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 
 let index = 0;
 export const GroupNodeRegistry: FlowNodeRegistry = {
@@ -59,7 +60,7 @@ export const GroupNodeRegistry: FlowNodeRegistry = {
       },
       data: {
         color: 'Green',
-        title: `Group_${++index}`,
+        title: t('Group_{{index}}', { index: ++index }),
       },
     };
   },

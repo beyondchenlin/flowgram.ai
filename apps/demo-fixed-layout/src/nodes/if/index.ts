@@ -8,6 +8,7 @@ import { FlowNodeSplitType } from '@flowgram.ai/fixed-layout-editor';
 
 import { defaultFormMeta } from '../default-form-meta';
 import { FlowNodeRegistry } from '../../typings';
+import { t } from '../../i18n';
 import iconIf from '../../assets/icon-if.png';
 
 export const IFNodeRegistry: FlowNodeRegistry = {
@@ -15,7 +16,7 @@ export const IFNodeRegistry: FlowNodeRegistry = {
   type: 'if',
   info: {
     icon: iconIf,
-    description: 'Only the corresponding branch will be executed if the set conditions are met.',
+    description: t('Execute only the matched branch when the condition is met.'),
   },
   meta: {
     expandable: false, // disable expanded
@@ -26,7 +27,7 @@ export const IFNodeRegistry: FlowNodeRegistry = {
       id: `if_${nanoid(5)}`,
       type: 'if',
       data: {
-        title: 'If',
+        title: t('If'),
         inputsValues: {
           condition: { type: 'constant', content: true },
         },
@@ -45,7 +46,7 @@ export const IFNodeRegistry: FlowNodeRegistry = {
           id: nanoid(5),
           type: 'ifBlock',
           data: {
-            title: 'true',
+            title: t('True Branch'),
           },
           blocks: [],
         },
@@ -53,7 +54,7 @@ export const IFNodeRegistry: FlowNodeRegistry = {
           id: nanoid(5),
           type: 'ifBlock',
           data: {
-            title: 'false',
+            title: t('False Branch'),
           },
         },
       ],

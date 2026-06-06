@@ -6,6 +6,7 @@
 import { JsonSchemaUtils } from '@flowgram.ai/form-materials';
 import { ASTFactory, definePluginCreator, GlobalScope } from '@flowgram.ai/fixed-layout-editor';
 
+import { t } from '../../i18n';
 import iconVariable from '../../assets/icon-variable.png';
 import { VariablePanelLayer } from './variable-panel-layer';
 
@@ -29,7 +30,7 @@ export const createVariablePanelPlugin = definePluginCreator({
         ASTFactory.createVariableDeclaration({
           key: 'global',
           meta: {
-            title: 'Global',
+            title: t('Global Variable'),
             icon: iconVariable,
           },
           type: JsonSchemaUtils.schemaToAST(v),
