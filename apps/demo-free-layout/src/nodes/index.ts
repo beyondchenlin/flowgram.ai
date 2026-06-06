@@ -11,11 +11,13 @@
 import { FlowNodeRegistry } from '../typings';
 import { VariableNodeRegistry } from './variable';
 import { StartNodeRegistry } from './start';
+import { MultiConditionNodeRegistry } from './multi-condition';
 import { LoopNodeRegistry } from './loop';
 import { LLMNodeRegistry } from './llm';
 import { HTTPNodeRegistry } from './http';
 import { GroupNodeRegistry } from './group';
 import { EndNodeRegistry } from './end';
+import { DebugOutputNodeRegistry } from './debug-output';
 import { ContinueNodeRegistry } from './continue';
 import { ConditionNodeRegistry } from './condition';
 import { CommentNodeRegistry } from './comment';
@@ -23,7 +25,6 @@ import { CodeNodeRegistry } from './code';
 import { BreakNodeRegistry } from './break';
 import { BlockStartNodeRegistry } from './block-start';
 import { BlockEndNodeRegistry } from './block-end';
-import { MultiConditionNodeRegistry } from "./multi-condition";
 export { WorkflowNodeType } from './constants';
 
 export const nodeRegistries: FlowNodeRegistry[] = [
@@ -31,6 +32,7 @@ export const nodeRegistries: FlowNodeRegistry[] = [
   StartNodeRegistry,
   EndNodeRegistry,
   LLMNodeRegistry,
+  DebugOutputNodeRegistry,
   LoopNodeRegistry,
   CommentNodeRegistry,
   BlockStartNodeRegistry,

@@ -74,10 +74,10 @@ interface NodeListProps {
 }
 
 export const NodeList: FC<NodeListProps> = (props) => {
-  const { onSelect, containerNode } = props;
+  const { onSelect, containerNode, fromPort } = props;
   const context = useClientContext();
   const handleClick = (e: React.MouseEvent, registry: FlowNodeRegistry) => {
-    const json = registry.onAdd?.(context);
+    const json = registry.onAdd?.(context, { fromPort, containerNode });
     onSelect({
       nodeType: registry.type as string,
       selectEvent: e,

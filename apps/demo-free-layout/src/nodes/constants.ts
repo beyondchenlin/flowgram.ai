@@ -12,6 +12,7 @@ export enum WorkflowNodeType {
   Start = 'start',
   End = 'end',
   LLM = 'llm',
+  DebugOutput = 'debug-output',
   HTTP = 'http',
   Code = 'code',
   Variable = 'variable',

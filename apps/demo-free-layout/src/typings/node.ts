@@ -8,6 +8,7 @@ import {
   WorkflowNodeRegistry as FlowNodeRegistryDefault,
   FreeLayoutPluginContext,
   FlowNodeEntity,
+  WorkflowPortEntity,
   type WorkflowEdgeJSON,
   WorkflowNodeMeta,
 } from '@flowgram.ai/free-layout-editor';
@@ -60,6 +61,11 @@ export interface FlowNodeMeta extends WorkflowNodeMeta {
  * You can customize your own node registry
  * 你可以自定义节点的注册器
  */
+export interface FlowNodeAddContext {
+  fromPort?: WorkflowPortEntity;
+  containerNode?: FlowNodeEntity;
+}
+
 export interface FlowNodeRegistry extends FlowNodeRegistryDefault {
   meta: FlowNodeMeta;
   info?: {
@@ -68,7 +74,7 @@ export interface FlowNodeRegistry extends FlowNodeRegistryDefault {
   };
   canAdd?: (ctx: FreeLayoutPluginContext) => boolean;
   canDelete?: (ctx: FreeLayoutPluginContext, from: FlowNodeEntity) => boolean;
-  onAdd?: (ctx: FreeLayoutPluginContext) => FlowNodeJSON;
+  onAdd?: (ctx: FreeLayoutPluginContext, addContext?: FlowNodeAddContext) => FlowNodeJSON;
 }
 
 export interface FlowDocumentJSON {

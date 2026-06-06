@@ -12,6 +12,7 @@ const zhCNContents = {
   End: '结束',
   Condition: '条件判断',
   LLM: '大模型',
+  'Debug Output': '调试输出',
   'HTTP Request': 'HTTP 请求',
   Loop: '循环',
   Code: '代码',
@@ -22,6 +23,7 @@ const zhCNContents = {
   'HTTP Request_{{index}}': 'HTTP 请求_{{index}}',
   'Loop_{{index}}': '循环_{{index}}',
   'LLM_{{index}}': '大模型_{{index}}',
+  'Debug Output_{{index}}': '调试输出_{{index}}',
   'Code_{{index}}': '代码_{{index}}',
   'Variable_{{index}}': '变量_{{index}}',
   'Break_{{index}}': '中断_{{index}}',
@@ -43,6 +45,8 @@ const zhCNContents = {
     '连接多个下游分支，满足条件时只执行对应分支。',
   'Call the large language model and use variables and prompts to generate responses.':
     '调用大语言模型，结合变量和提示词生成回复。',
+  'Pass upstream values through unchanged and display runtime outputs for debugging.':
+    '原样透传上游值，并在运行时展示输出，便于调试。',
   'Call HTTP API': '调用 HTTP API',
   'Execute script code': '执行脚本代码',
   'Variable assignment and declaration': '变量赋值与声明',
@@ -170,6 +174,7 @@ const nodePanelLabelKeys: Record<string, keyof typeof zhCNContents> = {
   end: 'End',
   condition: 'Condition',
   llm: 'LLM',
+  'debug-output': 'Debug Output',
   http: 'HTTP Request',
   loop: 'Loop',
   code: 'Code',
