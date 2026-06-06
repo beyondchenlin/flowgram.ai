@@ -20,7 +20,10 @@ export const demoLLMConfig = {
     legacyDemoLLMConfig.modelName
   ),
   apiKey: normalizeEnvConfig(process.env.FLOWGRAM_DEMO_LLM_API_KEY, legacyDemoLLMConfig.apiKey),
-  apiHost: normalizeEnvConfig(process.env.FLOWGRAM_DEMO_LLM_API_HOST, legacyDemoLLMConfig.apiHost),
+  apiHost: normalizeApiHostConfig(
+    process.env.FLOWGRAM_DEMO_LLM_API_HOST,
+    legacyDemoLLMConfig.apiHost
+  ),
 } as const;
 
 const defaultSystemPrompt = '# Role\nYou are an AI assistant.\n';
@@ -246,4 +249,22 @@ function createManagedValueFingerprint(value: string): string {
 
 function normalizeEnvConfig(value: string | undefined, fallback: string): string {
   return value?.trim() || fallback;
+}
+
+function normalizeApiHostConfig(value: string | undefined, fallback: string): string {
+  const apiHost = normalizeEnvConfig(value, fallback);
+
+  try {
+    const url = new URL(apiHost);
+    const pathname = url.pathname.replace(/\/+$/, '');
+    if (!pathname) {
+      url.pathname = '/v1';
+      return url.toString();
+    }
+
+    url.pathname = pathname;
+    return url.toString();
+  } catch {
+    return apiHost;
+  }
 }
