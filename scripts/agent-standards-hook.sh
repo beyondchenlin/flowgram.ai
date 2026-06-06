@@ -74,7 +74,8 @@ fi
 cd "$repo_root"
 
 git_dir=$(git rev-parse --git-dir)
-state_file=$(git rev-parse --git-path oceans-agent-standards-state)
+git_common_dir=$(git rev-parse --git-common-dir)
+state_file=$git_common_dir/oceans-agent-standards-state
 config_file=$repo_root/.oceans/agent-standards.conf
 if [ ! -f "$ASSETS_DIR/AGENTS.template.md" ] &&
    [ -f "$repo_root/.oceans/templates/AGENTS.template.md" ]; then
@@ -134,6 +135,11 @@ is_tracked_or_staged() {
   git diff --cached --name-only -- "$path" | grep -q .
 }
 
+has_committed_doc() {
+  path=$1
+  git log --max-count=1 --format=%H -- "$path" | grep -q .
+}
+
 mark_reviewed() {
   state_dir=$(dirname "$state_file")
   mkdir -p "$state_dir"
@@ -160,7 +166,7 @@ check_doc() {
     return
   fi
 
-  if [ "$reviewed" -ne 1 ]; then
+  if [ "$reviewed" -ne 1 ] && ! has_committed_doc "$path"; then
     open_doc "$path"
     info "${path} 已存在，脚本不会覆盖。"
     info "如需去重报告，运行：$SCRIPT_DIR/dedupe-agent-docs.sh --project \"$repo_root\""
