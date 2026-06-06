@@ -14,7 +14,7 @@ demo 的大模型节点可以通过 `apps/demo-free-layout/.env.local` 指向 Op
 
 ```shell
 FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
-FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777
+FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777/v1
 FLOWGRAM_DEMO_LLM_API_KEY=sk-...
 ```
 

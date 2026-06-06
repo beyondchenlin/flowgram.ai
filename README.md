@@ -67,7 +67,7 @@ node common/scripts/install-run-rush.js install
 
 ```sh
 FLOWGRAM_DEMO_LLM_MODEL_NAME=qwen3.7-plus
-FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777
+FLOWGRAM_DEMO_LLM_API_HOST=http://127.0.0.1:17777/v1
 FLOWGRAM_DEMO_LLM_API_KEY=sk-...
 ```
 
