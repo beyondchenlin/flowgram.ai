@@ -120,6 +120,10 @@ export class CustomService {
     return result;
   }
 
+  saveDraftImmediately(): WorkflowDocumentRecord {
+    return this.saveDraftNow();
+  }
+
   getDocumentStore(
     fallbackData = this.getCurrentDocumentData()
   ): WorkflowDocumentStore<FlowDocumentJSON> {
@@ -184,6 +188,16 @@ export class CustomService {
     fallbackData: FlowDocumentJSON
   ): WorkflowDocumentManagerOptions<FlowDocumentJSON> {
     return createDemoWorkflowDocumentManagerOptions(this.ctx.get(StorageService), fallbackData);
+  }
+
+  private saveDraftNow(): WorkflowDocumentRecord {
+    const currentData = this.getCurrentDocumentData();
+    const store = this.getDocumentStore(currentData);
+    return saveWorkflowDocumentData(
+      this.getManagerOptions(currentData),
+      store.activeRecord.id,
+      currentData
+    );
   }
 
   private getCurrentDocumentData(): FlowDocumentJSON {

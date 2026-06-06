@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { cloneCanvasData } from './utils/canvas-document-data';
 import { FlowDocumentJSON } from './typings';
 import { createLLMDefaultData } from './nodes/llm/defaults';
 import { t } from './i18n';
@@ -515,3 +516,7 @@ export const initialData: FlowDocumentJSON = {
     },
   },
 };
+
+export function createInitialCanvasData(): FlowDocumentJSON {
+  return cloneCanvasData(initialData);
+}

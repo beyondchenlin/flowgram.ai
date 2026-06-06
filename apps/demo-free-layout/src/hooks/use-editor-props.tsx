@@ -60,8 +60,13 @@ export function useEditorProps(
     [initialData]
   );
 
-  return useMemo<FreeLayoutProps>(
-    () => ({
+  return useMemo<FreeLayoutProps>(() => {
+    const saveDocumentDraft = debounce((ctx: FreeLayoutPluginContext) => {
+      saveDocumentDraftImmediately(ctx);
+    }, 1000);
+    let removeDraftLifecycleListeners: (() => void) | undefined;
+
+    return {
       /**
        * Whether to enable the background
        */
@@ -246,13 +251,9 @@ export function useEditorProps(
       /**
        * Content change
        */
-      onContentChange: debounce((ctx: FreeLayoutPluginContext) => {
-        if (ctx.document.disposed) return;
-        void ctx
-          .get(CustomService)
-          .save({ validate: false })
-          .catch(() => undefined);
-      }, 1000),
+      onContentChange: (ctx: FreeLayoutPluginContext) => {
+        saveDocumentDraft(ctx);
+      },
       /**
        * Running line
        */
@@ -272,6 +273,21 @@ export function useEditorProps(
        * Playground init
        */
       onInit(ctx) {
+        if (typeof window !== 'undefined') {
+          const handlePageHide = () => saveDocumentDraftImmediately(ctx);
+          const handleVisibilityChange = () => {
+            if (window.document.visibilityState === 'hidden') {
+              saveDocumentDraftImmediately(ctx);
+            }
+          };
+
+          window.addEventListener('pagehide', handlePageHide);
+          window.document.addEventListener('visibilitychange', handleVisibilityChange);
+          removeDraftLifecycleListeners = () => {
+            window.removeEventListener('pagehide', handlePageHide);
+            window.document.removeEventListener('visibilitychange', handleVisibilityChange);
+          };
+        }
         console.log('--- Playground init ---');
       },
       /**
@@ -285,7 +301,10 @@ export function useEditorProps(
       /**
        * Playground dispose
        */
-      onDispose() {
+      onDispose(ctx) {
+        removeDraftLifecycleListeners?.();
+        saveDocumentDraftImmediately(ctx);
+        saveDocumentDraft.cancel();
         console.log('---- Playground Dispose ----');
       },
       i18n: demoI18nOptions,
@@ -414,7 +433,18 @@ export function useEditorProps(
         /** Float layout plugin */
         createPanelManagerPlugin(),
       ],
-    }),
-    [persistedInitialData, nodeRegistries]
-  );
+    };
+  }, [persistedInitialData, nodeRegistries]);
+}
+
+function saveDocumentDraftImmediately(ctx: FreeLayoutPluginContext): void {
+  if (ctx.document.disposed) {
+    return;
+  }
+
+  try {
+    ctx.get(CustomService).saveDraftImmediately();
+  } catch {
+    // Draft persistence is best-effort and should not interrupt editor lifecycle events.
+  }
 }

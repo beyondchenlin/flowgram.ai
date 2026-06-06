@@ -9,9 +9,8 @@ import { useClientContext, type WorkflowDocumentRecord } from '@flowgram.ai/free
 import { Button, Dropdown, IconButton, Toast, Tooltip } from '@douyinfe/semi-ui';
 import { IconChevronDown, IconPlus } from '@douyinfe/semi-icons';
 
-import { type FlowDocumentJSON } from '../../typings';
+import { createEmptyCanvasData } from '../../utils';
 import { CustomService } from '../../services';
-import { initialData } from '../../initial-data';
 import { t } from '../../i18n';
 
 interface DocumentManagerToolProps {
@@ -28,8 +27,8 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
   const disabled = props.disabled || switching;
 
   const refreshDocuments = useCallback(() => {
-    const store = documentService.getDocumentStore(createInitialCanvasData());
-    setRecords(documentService.getDocumentRecords(createInitialCanvasData()));
+    const store = documentService.getDocumentStore();
+    setRecords(documentService.getDocumentRecords());
     setActiveDocumentId(store.activeRecord.id);
   }, [documentService]);
 
@@ -49,7 +48,7 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
     setSwitching(true);
     try {
       await documentService.createDocument(
-        createInitialCanvasData(),
+        createEmptyCanvasData(),
         t('Canvas {{index}}', {
           index: records.length + 1,
         })
@@ -72,7 +71,7 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
 
       setSwitching(true);
       try {
-        await documentService.openDocument(documentId, createInitialCanvasData());
+        await documentService.openDocument(documentId, createEmptyCanvasData());
         refreshDocuments();
         Toast.success(t('Canvas opened'));
       } catch {
@@ -151,10 +150,6 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
       </Tooltip>
     </>
   );
-}
-
-function createInitialCanvasData(): FlowDocumentJSON {
-  return JSON.parse(JSON.stringify(initialData)) as FlowDocumentJSON;
 }
 
 function formatUpdatedAt(updatedAt: string): string {

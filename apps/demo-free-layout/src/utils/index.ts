@@ -6,3 +6,4 @@
 export { onDragLineEnd } from './on-drag-line-end';
 export { toggleLoopExpanded } from './toggle-loop-expanded';
 export { canContainNode } from './can-contain-node';
+export { cloneCanvasData, createEmptyCanvasData } from './canvas-document-data';
