@@ -46,6 +46,13 @@ export interface WorkflowDocumentManagerOptions<T> {
 export interface CreateWorkflowDocumentOptions<T> {
   title?: string;
   data?: T;
+  currentData?: T;
+  currentUpdatedAt?: string;
+}
+
+export interface ActivateWorkflowDocumentOptions<T> {
+  currentData?: T;
+  currentUpdatedAt?: string;
 }
 
 export function ensureWorkflowDocumentStore<T>(
@@ -80,10 +87,16 @@ export function createWorkflowDocument<T>(
 ): WorkflowDocumentStore<T> {
   const currentStore = ensureWorkflowDocumentStore(options);
   const createdAt = getNowISOString(options);
+  const currentIndex = persistActiveWorkflowDocumentData(
+    options,
+    currentStore,
+    createOptions.currentData,
+    createOptions.currentUpdatedAt ?? createdAt
+  );
   const id = createUniqueDocumentId(options, currentStore.index.records);
   const record: WorkflowDocumentRecord = {
     id,
-    title: createOptions.title?.trim() || createDefaultTitle(currentStore.index.records.length + 1),
+    title: createOptions.title?.trim() || createDefaultTitle(currentIndex.records.length + 1),
     storageKey: createDocumentStorageKey(options, id),
     createdAt,
     updatedAt: createdAt,
@@ -92,9 +105,9 @@ export function createWorkflowDocument<T>(
   writeWorkflowDocumentSnapshot(options.storage, record.storageKey, activeData, createdAt);
 
   const index: WorkflowDocumentIndex = {
-    ...currentStore.index,
+    ...currentIndex,
     activeDocumentId: record.id,
-    records: [...currentStore.index.records, record],
+    records: [...currentIndex.records, record],
   };
   writeWorkflowDocumentIndex(options.storage, options.indexStorageKey, index);
 
@@ -107,16 +120,23 @@ export function createWorkflowDocument<T>(
 
 export function activateWorkflowDocument<T>(
   options: WorkflowDocumentManagerOptions<T>,
-  documentId: string
+  documentId: string,
+  activateOptions: ActivateWorkflowDocumentOptions<T> = {}
 ): WorkflowDocumentStore<T> {
   const currentStore = ensureWorkflowDocumentStore(options);
-  const activeRecord = currentStore.index.records.find((record) => record.id === documentId);
+  const currentIndex = persistActiveWorkflowDocumentData(
+    options,
+    currentStore,
+    activateOptions.currentData,
+    activateOptions.currentUpdatedAt
+  );
+  const activeRecord = currentIndex.records.find((record) => record.id === documentId);
   if (!activeRecord) {
     throw new Error(`Workflow document "${documentId}" does not exist.`);
   }
 
   const index: WorkflowDocumentIndex = {
-    ...currentStore.index,
+    ...currentIndex,
     activeDocumentId: activeRecord.id,
   };
   writeWorkflowDocumentIndex(options.storage, options.indexStorageKey, index);
@@ -176,6 +196,30 @@ export function getWorkflowDocumentRecords<T>(
   return [...store.index.records].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
+}
+
+function persistActiveWorkflowDocumentData<T>(
+  options: WorkflowDocumentManagerOptions<T>,
+  store: WorkflowDocumentStore<T>,
+  data: T | undefined,
+  updatedAt = getNowISOString(options)
+): WorkflowDocumentIndex {
+  if (data === undefined) {
+    return store.index;
+  }
+
+  writeWorkflowDocumentSnapshot(options.storage, store.activeRecord.storageKey, data, updatedAt);
+  const updatedRecord: WorkflowDocumentRecord = {
+    ...store.activeRecord,
+    updatedAt,
+  };
+
+  return {
+    ...store.index,
+    records: store.index.records.map((record) =>
+      record.id === updatedRecord.id ? updatedRecord : record
+    ),
+  };
 }
 
 function createInitialWorkflowDocumentStore<T>(

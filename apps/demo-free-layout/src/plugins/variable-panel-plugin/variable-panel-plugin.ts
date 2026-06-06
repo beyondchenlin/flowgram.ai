@@ -11,6 +11,7 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 import { IJsonSchema, JsonSchemaUtils } from '@flowgram.ai/form-materials';
 
+import { normalizeGlobalVariableSchema } from '../../services/global-variable';
 import { t } from '../../i18n';
 import iconVariable from '../../assets/icon-variable.png';
 import { VariablePanelLayer } from './variable-panel-layer';
@@ -27,7 +28,7 @@ const fetchMockVariableFromRemote = async () => {
 
 export type GetGlobalVariableSchema = () => IJsonSchema;
 export const GetGlobalVariableSchema = Symbol('GlobalVariableSchemaGetter');
-export type SetGlobalVariableSchema = (schema: IJsonSchema) => void;
+export type SetGlobalVariableSchema = (schema: IJsonSchema | undefined) => void;
 export const SetGlobalVariableSchema = Symbol('GlobalVariableSchemaSetter');
 
 export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJsonSchema }>({
@@ -36,7 +37,7 @@ export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJs
       const variable = ctx.container.get(GlobalScope).getVar() as VariableDeclaration;
       return JsonSchemaUtils.astToSchema(variable?.type);
     });
-    bind(SetGlobalVariableSchema).toDynamicValue((ctx) => (schema: IJsonSchema) => {
+    bind(SetGlobalVariableSchema).toDynamicValue((ctx) => (schema: IJsonSchema | undefined) => {
       setGlobalVariableSchema(ctx.container.get(GlobalScope), schema);
     });
   },
@@ -56,7 +57,7 @@ export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJs
   },
 });
 
-function setGlobalVariableSchema(globalScope: GlobalScope, schema: IJsonSchema): void {
+function setGlobalVariableSchema(globalScope: GlobalScope, schema: IJsonSchema | undefined): void {
   globalScope.setVar(
     ASTFactory.createVariableDeclaration({
       key: 'global',
@@ -64,7 +65,7 @@ function setGlobalVariableSchema(globalScope: GlobalScope, schema: IJsonSchema):
         title: t('Global Variable'),
         icon: iconVariable,
       },
-      type: JsonSchemaUtils.schemaToAST(schema),
+      type: JsonSchemaUtils.schemaToAST(normalizeGlobalVariableSchema(schema)),
     })
   );
 }

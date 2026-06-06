@@ -28,6 +28,7 @@ import { type FlowDocumentJSON } from '../typings';
 import { GetGlobalVariableSchema, SetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
 import { applyDemoLLMConfig } from '../nodes/llm/defaults';
 import { t } from '../i18n';
+import { DocumentOperationQueue } from './document-operation-queue';
 
 export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY = 'flowgram.demo.free-layout.document';
 export const DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY =
@@ -73,6 +74,8 @@ export function createDemoWorkflowDocumentManagerOptions(
  */
 @injectable()
 export class CustomService {
+  private readonly documentOperations = new DocumentOperationQueue();
+
   @inject(FreeLayoutPluginContext) ctx: FreeLayoutPluginContext;
 
   @inject(SelectionService) selectionService: SelectionService;
@@ -87,14 +90,22 @@ export class CustomService {
       'blockOnValidationErrors' | 'validate'
     >
   ): Promise<WorkflowDocumentSaveResult<FlowDocumentJSON>> {
-    const data = this.getCurrentDocumentData();
-    const store = this.getDocumentStore(data);
+    return this.documentOperations.run(() => this.saveNow(options));
+  }
+
+  private async saveNow(
+    options?: Pick<
+      SaveWorkflowDocumentOptions<FlowDocumentJSON>,
+      'blockOnValidationErrors' | 'validate'
+    >
+  ): Promise<WorkflowDocumentSaveResult<FlowDocumentJSON>> {
+    const store = this.getDocumentStore();
     const result = await saveWorkflowDocument<FlowDocumentJSON>({
       document: this.document,
       storage: this.ctx.get(StorageService),
       storageKey: store.activeRecord.storageKey,
       ...options,
-      getData: () => data,
+      getData: () => this.getCurrentDocumentData(),
     });
 
     if (result.saved) {
@@ -119,10 +130,22 @@ export class CustomService {
     return getWorkflowDocumentRecords(this.getManagerOptions(fallbackData));
   }
 
-  createDocument(data: FlowDocumentJSON, title?: string): WorkflowDocumentStore<FlowDocumentJSON> {
+  createDocument(
+    data: FlowDocumentJSON,
+    title?: string
+  ): Promise<WorkflowDocumentStore<FlowDocumentJSON>> {
+    return this.documentOperations.run(() => this.createDocumentNow(data, title));
+  }
+
+  private createDocumentNow(
+    data: FlowDocumentJSON,
+    title?: string
+  ): WorkflowDocumentStore<FlowDocumentJSON> {
     const nextData = applyDemoLLMConfig(data);
+    const currentData = this.getCurrentDocumentData();
     const store = createWorkflowDocument(this.getManagerOptions(nextData), {
       title,
+      currentData,
       data: nextData,
     });
     this.applyDocumentData(store.activeData);
@@ -131,10 +154,20 @@ export class CustomService {
 
   openDocument(
     documentId: string,
-    fallbackData = this.getCurrentDocumentData()
+    fallbackData?: FlowDocumentJSON
+  ): Promise<WorkflowDocumentStore<FlowDocumentJSON>> {
+    return this.documentOperations.run(() => this.openDocumentNow(documentId, fallbackData));
+  }
+
+  private openDocumentNow(
+    documentId: string,
+    fallbackData?: FlowDocumentJSON
   ): WorkflowDocumentStore<FlowDocumentJSON> {
-    const options = this.getManagerOptions(fallbackData);
-    const store = activateWorkflowDocument(options, documentId);
+    const currentData = this.getCurrentDocumentData();
+    const options = this.getManagerOptions(fallbackData ?? currentData);
+    const store = activateWorkflowDocument(options, documentId, {
+      currentData,
+    });
     const nextData = applyDemoLLMConfig(store.activeData);
     if (nextData !== store.activeData) {
       saveWorkflowDocumentData(options, store.activeRecord.id, nextData);
@@ -165,9 +198,7 @@ export class CustomService {
     try {
       this.document.fromJSON(data);
       this.ctx.history.clear();
-      if (data.globalVariable) {
-        this.ctx.get<SetGlobalVariableSchema>(SetGlobalVariableSchema)(data.globalVariable);
-      }
+      this.ctx.get<SetGlobalVariableSchema>(SetGlobalVariableSchema)(data.globalVariable);
     } finally {
       this.ctx.history.start();
     }

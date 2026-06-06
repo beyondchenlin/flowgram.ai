@@ -24,6 +24,8 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
   const [visible, setVisible] = useState(false);
   const [records, setRecords] = useState<WorkflowDocumentRecord[]>([]);
   const [activeDocumentId, setActiveDocumentId] = useState('');
+  const [switching, setSwitching] = useState(false);
+  const disabled = props.disabled || switching;
 
   const refreshDocuments = useCallback(() => {
     const store = documentService.getDocumentStore(createInitialCanvasData());
@@ -43,9 +45,10 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
     setVisible(true);
   }, [refreshDocuments]);
 
-  const handleCreateDocument = useCallback(() => {
+  const handleCreateDocument = useCallback(async () => {
+    setSwitching(true);
     try {
-      documentService.createDocument(
+      await documentService.createDocument(
         createInitialCanvasData(),
         t('Canvas {{index}}', {
           index: records.length + 1,
@@ -55,24 +58,28 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
       Toast.success(t('Canvas created'));
     } catch {
       Toast.error(t('Create canvas failed'));
+    } finally {
+      setSwitching(false);
     }
   }, [documentService, records.length, refreshDocuments]);
 
   const handleOpenDocument = useCallback(
-    (documentId: string) => {
+    async (documentId: string) => {
       if (documentId === activeDocumentId) {
         setVisible(false);
         return;
       }
 
+      setSwitching(true);
       try {
-        documentService.openDocument(documentId, createInitialCanvasData());
+        await documentService.openDocument(documentId, createInitialCanvasData());
         refreshDocuments();
         Toast.success(t('Canvas opened'));
       } catch {
         Toast.error(t('Open canvas failed'));
       } finally {
         setVisible(false);
+        setSwitching(false);
       }
     },
     [activeDocumentId, documentService, refreshDocuments]
@@ -90,7 +97,7 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
             {records.map((record) => (
               <Dropdown.Item
                 key={record.id}
-                disabled={props.disabled}
+                disabled={disabled}
                 onClick={() => handleOpenDocument(record.id)}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -109,7 +116,8 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
         }
       >
         <Button
-          disabled={props.disabled}
+          disabled={disabled}
+          loading={switching}
           theme="borderless"
           type="tertiary"
           size="small"
@@ -134,7 +142,7 @@ export function DocumentManagerTool(props: DocumentManagerToolProps) {
       <Tooltip content={t('New Canvas')}>
         <IconButton
           aria-label={t('New Canvas')}
-          disabled={props.disabled}
+          disabled={disabled}
           type="tertiary"
           theme="borderless"
           icon={<IconPlus />}

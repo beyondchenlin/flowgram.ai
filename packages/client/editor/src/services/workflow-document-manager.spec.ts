@@ -125,6 +125,32 @@ describe('workflow document manager', () => {
     });
   });
 
+  it('saves the current active document before creating a new active document', () => {
+    const options = createOptions();
+    ensureWorkflowDocumentStore(options);
+
+    createWorkflowDocument(options, {
+      title: 'Experiment',
+      currentData: {
+        nodes: [{ id: 'edited_default', type: 'start' }],
+        edges: [],
+      },
+      data: {
+        nodes: [{ id: 'experiment', type: 'start' }],
+        edges: [],
+      },
+    });
+
+    expect(loadWorkflowDocumentData(options, 'demo-default')).toEqual({
+      nodes: [{ id: 'edited_default', type: 'start' }],
+      edges: [],
+    });
+    expect(loadWorkflowDocumentData(options, 'doc-created')).toEqual({
+      nodes: [{ id: 'experiment', type: 'start' }],
+      edges: [],
+    });
+  });
+
   it('saves document data and returns records sorted by updated time', () => {
     const options = createOptions();
     ensureWorkflowDocumentStore(options);
@@ -168,5 +194,30 @@ describe('workflow document manager', () => {
     expect(store.index.activeDocumentId).toBe('demo-default');
     expect(store.activeRecord.id).toBe('demo-default');
     expect(store.activeData).toEqual(fallbackData);
+  });
+
+  it('saves the current active document before activating another document', () => {
+    const options = createOptions();
+    ensureWorkflowDocumentStore(options);
+    createWorkflowDocument(options, {
+      title: 'Experiment',
+      data: {
+        nodes: [{ id: 'experiment', type: 'start' }],
+        edges: [],
+      },
+    });
+
+    const store = activateWorkflowDocument(options, 'demo-default', {
+      currentData: {
+        nodes: [{ id: 'edited_experiment', type: 'start' }],
+        edges: [],
+      },
+    });
+
+    expect(store.index.activeDocumentId).toBe('demo-default');
+    expect(loadWorkflowDocumentData(options, 'doc-created')).toEqual({
+      nodes: [{ id: 'edited_experiment', type: 'start' }],
+      edges: [],
+    });
   });
 });

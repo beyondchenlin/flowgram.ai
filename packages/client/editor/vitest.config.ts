@@ -16,6 +16,11 @@ export default defineConfig({
     globals: true,
     mockReset: false,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost/',
+      },
+    },
     setupFiles: [path.resolve(__dirname, './vitest.setup.ts')],
     include: ['**/?(*.){test,spec}.?(c|m)[jt]s?(x)'],
     exclude: [
