@@ -79,6 +79,7 @@ export * from './preset';
 export * from './components';
 export * from './hooks';
 export * from './clients';
+export * from './services/workflow-document-manager';
 export * from './services/workflow-document-persistence';
 
 /**

@@ -26,6 +26,7 @@ import { Comment } from './comment';
 import { AutoLayout } from './auto-layout';
 import { ProblemButton } from '../problem-panel';
 import { DownloadTool } from './download';
+import { DocumentManagerTool } from './document-manager';
 
 export const DemoTools = () => {
   const { history, playground } = useClientContext();
@@ -49,6 +50,8 @@ export const DemoTools = () => {
   return (
     <ToolContainer className="demo-free-layout-tools">
       <ToolSection>
+        <DocumentManagerTool disabled={playground.config.readonly} />
+        <Divider layout="vertical" style={{ height: '16px' }} margin={3} />
         <Interactive />
         <AutoLayout />
         <SwitchLine />

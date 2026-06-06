@@ -27,12 +27,17 @@ const fetchMockVariableFromRemote = async () => {
 
 export type GetGlobalVariableSchema = () => IJsonSchema;
 export const GetGlobalVariableSchema = Symbol('GlobalVariableSchemaGetter');
+export type SetGlobalVariableSchema = (schema: IJsonSchema) => void;
+export const SetGlobalVariableSchema = Symbol('GlobalVariableSchemaSetter');
 
 export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJsonSchema }>({
   onBind({ bind }) {
     bind(GetGlobalVariableSchema).toDynamicValue((ctx) => () => {
       const variable = ctx.container.get(GlobalScope).getVar() as VariableDeclaration;
       return JsonSchemaUtils.astToSchema(variable?.type);
+    });
+    bind(SetGlobalVariableSchema).toDynamicValue((ctx) => (schema: IJsonSchema) => {
+      setGlobalVariableSchema(ctx.container.get(GlobalScope), schema);
     });
   },
   onInit(ctx, opts) {
@@ -41,30 +46,25 @@ export const createVariablePanelPlugin = definePluginCreator<{ initialData?: IJs
     const globalScope = ctx.get(GlobalScope);
 
     if (opts.initialData) {
-      globalScope.setVar(
-        ASTFactory.createVariableDeclaration({
-          key: 'global',
-          meta: {
-            title: t('Global Variable'),
-            icon: iconVariable,
-          },
-          type: JsonSchemaUtils.schemaToAST(opts.initialData),
-        })
-      );
+      setGlobalVariableSchema(globalScope, opts.initialData);
     } else {
       // You can also fetch global variable from remote
       fetchMockVariableFromRemote().then((v) => {
-        globalScope.setVar(
-          ASTFactory.createVariableDeclaration({
-            key: 'global',
-            meta: {
-              title: t('Global Variable'),
-              icon: iconVariable,
-            },
-            type: JsonSchemaUtils.schemaToAST(v),
-          })
-        );
+        setGlobalVariableSchema(globalScope, v);
       });
     }
   },
 });
+
+function setGlobalVariableSchema(globalScope: GlobalScope, schema: IJsonSchema): void {
+  globalScope.setVar(
+    ASTFactory.createVariableDeclaration({
+      key: 'global',
+      meta: {
+        title: t('Global Variable'),
+        icon: iconVariable,
+      },
+      type: JsonSchemaUtils.schemaToAST(schema),
+    })
+  );
+}

@@ -10,15 +10,46 @@ import {
   Playground,
   WorkflowDocument,
   StorageService,
+  activateWorkflowDocument,
+  createWorkflowDocument,
+  ensureWorkflowDocumentStore,
+  getWorkflowDocumentRecords,
+  saveWorkflowDocumentData,
   saveWorkflowDocument,
   type SaveWorkflowDocumentOptions,
+  type WorkflowDocumentManagerOptions,
+  type WorkflowDocumentPersistenceStorage,
+  type WorkflowDocumentRecord,
   type WorkflowDocumentSaveResult,
+  type WorkflowDocumentStore,
 } from '@flowgram.ai/free-layout-editor';
 
 import { type FlowDocumentJSON } from '../typings';
-import { GetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
+import { GetGlobalVariableSchema, SetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
+import { applyDemoLLMConfig } from '../nodes/llm/defaults';
+import { t } from '../i18n';
 
 export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY = 'flowgram.demo.free-layout.document';
+export const DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY =
+  'flowgram.demo.free-layout.documents.index';
+export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY_PREFIX = 'flowgram.demo.free-layout.document.';
+export const DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_ID = 'default';
+export const DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_TITLE = 'Default Canvas';
+
+export function createDemoWorkflowDocumentManagerOptions(
+  storage: WorkflowDocumentPersistenceStorage,
+  fallbackData: FlowDocumentJSON
+): WorkflowDocumentManagerOptions<FlowDocumentJSON> {
+  return {
+    storage,
+    indexStorageKey: DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY,
+    documentStorageKeyPrefix: DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY_PREFIX,
+    defaultDocumentId: DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_ID,
+    defaultDocumentTitle: t(DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_TITLE),
+    fallbackData,
+    legacyStorageKey: DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+  };
+}
 
 /**
  * Docs: https://inversify.io/docs/introduction/getting-started/
@@ -50,21 +81,99 @@ export class CustomService {
 
   @inject(WorkflowDocument) document: WorkflowDocument;
 
-  save(
+  async save(
     options?: Pick<
       SaveWorkflowDocumentOptions<FlowDocumentJSON>,
       'blockOnValidationErrors' | 'validate'
     >
   ): Promise<WorkflowDocumentSaveResult<FlowDocumentJSON>> {
-    return saveWorkflowDocument<FlowDocumentJSON>({
+    const data = this.getCurrentDocumentData();
+    const store = this.getDocumentStore(data);
+    const result = await saveWorkflowDocument<FlowDocumentJSON>({
       document: this.document,
       storage: this.ctx.get(StorageService),
-      storageKey: DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+      storageKey: store.activeRecord.storageKey,
       ...options,
-      getData: () => ({
-        ...(this.document.toJSON() as FlowDocumentJSON),
-        globalVariable: this.ctx.get<GetGlobalVariableSchema>(GetGlobalVariableSchema)(),
-      }),
+      getData: () => data,
     });
+
+    if (result.saved) {
+      saveWorkflowDocumentData(
+        this.getManagerOptions(result.snapshot.data),
+        store.activeRecord.id,
+        result.snapshot.data,
+        result.snapshot.updatedAt
+      );
+    }
+
+    return result;
+  }
+
+  getDocumentStore(
+    fallbackData = this.getCurrentDocumentData()
+  ): WorkflowDocumentStore<FlowDocumentJSON> {
+    return ensureWorkflowDocumentStore(this.getManagerOptions(fallbackData));
+  }
+
+  getDocumentRecords(fallbackData = this.getCurrentDocumentData()): WorkflowDocumentRecord[] {
+    return getWorkflowDocumentRecords(this.getManagerOptions(fallbackData));
+  }
+
+  createDocument(data: FlowDocumentJSON, title?: string): WorkflowDocumentStore<FlowDocumentJSON> {
+    const nextData = applyDemoLLMConfig(data);
+    const store = createWorkflowDocument(this.getManagerOptions(nextData), {
+      title,
+      data: nextData,
+    });
+    this.applyDocumentData(store.activeData);
+    return store;
+  }
+
+  openDocument(
+    documentId: string,
+    fallbackData = this.getCurrentDocumentData()
+  ): WorkflowDocumentStore<FlowDocumentJSON> {
+    const options = this.getManagerOptions(fallbackData);
+    const store = activateWorkflowDocument(options, documentId);
+    const nextData = applyDemoLLMConfig(store.activeData);
+    if (nextData !== store.activeData) {
+      saveWorkflowDocumentData(options, store.activeRecord.id, nextData);
+    }
+    this.applyDocumentData(nextData);
+
+    return {
+      ...store,
+      activeData: nextData,
+    };
+  }
+
+  private getManagerOptions(
+    fallbackData: FlowDocumentJSON
+  ): WorkflowDocumentManagerOptions<FlowDocumentJSON> {
+    return createDemoWorkflowDocumentManagerOptions(this.ctx.get(StorageService), fallbackData);
+  }
+
+  private getCurrentDocumentData(): FlowDocumentJSON {
+    return {
+      ...(this.document.toJSON() as FlowDocumentJSON),
+      globalVariable: this.ctx.get<GetGlobalVariableSchema>(GetGlobalVariableSchema)(),
+    };
+  }
+
+  private applyDocumentData(data: FlowDocumentJSON): void {
+    this.ctx.history.stop();
+    try {
+      this.document.fromJSON(data);
+      this.ctx.history.clear();
+      if (data.globalVariable) {
+        this.ctx.get<SetGlobalVariableSchema>(SetGlobalVariableSchema)(data.globalVariable);
+      }
+    } finally {
+      this.ctx.history.start();
+    }
+
+    setTimeout(() => {
+      void this.ctx.tools.fitView(false);
+    }, 0);
   }
 }
