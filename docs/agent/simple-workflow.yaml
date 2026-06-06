@@ -1,0 +1,37 @@
+nodes:
+  - id: start_0
+    type: start
+    meta:
+      position:
+        x: 0
+        y: 0
+    data:
+      title: Start
+      content: Receive user input
+
+  - id: process_0
+    type: custom
+    meta:
+      position:
+        x: 400
+        y: 0
+    data:
+      title: Process
+      content: Handle input and generate result
+
+  - id: end_0
+    type: end
+    meta:
+      position:
+        x: 800
+        y: 0
+    data:
+      title: End
+      content: Return final result
+
+edges:
+  - sourceNodeID: start_0
+    targetNodeID: process_0
+
+  - sourceNodeID: process_0
+    targetNodeID: end_0
