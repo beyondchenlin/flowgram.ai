@@ -210,7 +210,7 @@ export class CustomService {
   private applyDocumentData(data: FlowDocumentJSON): void {
     this.ctx.history.stop();
     try {
-      this.document.fromJSON(data);
+      this.ctx.operation.fromJSON(data);
       this.ctx.history.clear();
       this.ctx.get<SetGlobalVariableSchema>(SetGlobalVariableSchema)(data.globalVariable);
     } finally {

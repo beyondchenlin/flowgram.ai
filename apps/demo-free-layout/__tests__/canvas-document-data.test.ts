@@ -33,9 +33,33 @@ class MemoryStorage implements WorkflowDocumentPersistenceStorage {
 
 describe('demo free layout canvas document data', () => {
   it('creates a blank document for new canvases', () => {
-    expect(createEmptyCanvasData()).toEqual({
-      nodes: [],
-      edges: [],
+    expect(createEmptyCanvasData()).toMatchObject({
+      nodes: [
+        {
+          id: 'start_0',
+          type: 'start',
+          data: {
+            title: '开始',
+          },
+        },
+        {
+          id: 'end_0',
+          type: 'end',
+          data: {
+            title: '结束',
+          },
+        },
+      ],
+      edges: [
+        {
+          sourceNodeID: 'start_0',
+          targetNodeID: 'end_0',
+        },
+      ],
+      globalVariable: {
+        type: 'object',
+        properties: {},
+      },
     });
   });
 
@@ -53,10 +77,14 @@ describe('demo free layout canvas document data', () => {
     );
 
     expect(reopenedStore.activeRecord.id).toBe(createdStore.activeRecord.id);
-    expect(reopenedStore.activeData).toEqual({
-      nodes: [],
-      edges: [],
-    });
+    expect(reopenedStore.activeData.nodes).toHaveLength(2);
+    expect(reopenedStore.activeData.nodes.map((node) => node.type)).toEqual(['start', 'end']);
+    expect(reopenedStore.activeData.edges).toEqual([
+      {
+        sourceNodeID: 'start_0',
+        targetNodeID: 'end_0',
+      },
+    ]);
   });
 });
 
