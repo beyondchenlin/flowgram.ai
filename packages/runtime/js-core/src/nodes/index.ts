@@ -11,6 +11,7 @@ import { LLMExecutor } from './llm';
 import { HTTPExecutor } from './http';
 import { EndExecutor } from './end';
 import { BlockEndExecutor, BlockStartExecutor } from './empty';
+import { DebugOutputExecutor } from './debug-output';
 import { ContinueExecutor } from './continue';
 import { ConditionExecutor } from './condition';
 import { CodeExecutor } from './code';
@@ -20,6 +21,7 @@ export const WorkflowRuntimeNodeExecutors: INodeExecutorFactory[] = [
   StartExecutor,
   EndExecutor,
   LLMExecutor,
+  DebugOutputExecutor,
   ConditionExecutor,
   LoopExecutor,
   BlockStartExecutor,

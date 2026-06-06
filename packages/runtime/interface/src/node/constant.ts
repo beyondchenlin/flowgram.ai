@@ -8,6 +8,7 @@ export enum FlowGramNode {
   Start = 'start',
   End = 'end',
   LLM = 'llm',
+  DebugOutput = 'debug-output',
   Code = 'code',
   Condition = 'condition',
   Loop = 'loop',

@@ -12,6 +12,7 @@ import { llmRealSchema } from './llm-real';
 import { httpSchema } from './http';
 import { globalVariableSchema } from './global-variable';
 import { endConstantSchema } from './end-constant';
+import { debugOutputSchema } from './debug-output';
 import { codeSchema } from './code';
 import { branchTwoLayersSchema } from './branch-two-layers';
 import { branchSchema } from './branch';
@@ -28,6 +29,7 @@ export const TestSchemas = {
   validateInputsSchema,
   httpSchema,
   codeSchema,
+  debugOutputSchema,
   endConstantSchema,
   startDefaultSchema,
   globalVariableSchema,
