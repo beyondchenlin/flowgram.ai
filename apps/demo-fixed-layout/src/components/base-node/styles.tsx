@@ -23,6 +23,29 @@ export const BaseNodeStyle = styled.div`
   }
 `;
 
+export const DeleteIcon = styled.button`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  color: rgba(6, 7, 9, 0.6);
+  cursor: pointer;
+
+  &:hover {
+    color: #f93920;
+  }
+`;
+
 export const ErrorIcon = () => (
   <IconInfoCircle
     style={{

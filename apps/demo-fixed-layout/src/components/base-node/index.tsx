@@ -9,12 +9,15 @@ import { usePanelManager } from '@flowgram.ai/panel-manager-plugin';
 import {
   FlowNodeEntity,
   useNodeRender,
+  useClientContext,
   PlaygroundEntityContext,
 } from '@flowgram.ai/fixed-layout-editor';
 import { ConfigProvider } from '@douyinfe/semi-ui';
+import { IconDeleteStroked } from '@douyinfe/semi-icons';
 
+import { t } from '../../i18n';
 import { NodeRenderContext } from '../../context';
-import { BaseNodeStyle, ErrorIcon } from './styles';
+import { BaseNodeStyle, DeleteIcon, ErrorIcon } from './styles';
 import { nodeFormPanelFactory } from '../sidebar';
 
 export const BaseNode = ({ node }: { node: FlowNodeEntity }) => {
@@ -35,7 +38,13 @@ export const BaseNode = ({ node }: { node: FlowNodeEntity }) => {
    */
   const getPopupContainer = useCallback(() => node.renderData.node || document.body, []);
 
+  const ctx = useClientContext();
   const panelManager = usePanelManager();
+  const nodeRegistry = nodeRender.node.getNodeRegistry();
+  const canDelete =
+    !nodeRender.readonly &&
+    !nodeRender.node.getNodeMeta().deleteDisable &&
+    (nodeRegistry.canDelete?.(ctx, nodeRender.node) ?? true);
 
   return (
     <ConfigProvider getPopupContainer={getPopupContainer}>
@@ -71,6 +80,22 @@ export const BaseNode = ({ node }: { node: FlowNodeEntity }) => {
           outline: form?.state.invalid ? '1px solid red' : 'none',
         }}
       >
+        {canDelete && (
+          <DeleteIcon
+            type="button"
+            aria-label={t('Delete')}
+            title={t('Delete')}
+            onMouseDown={(event) => {
+              event.stopPropagation();
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              nodeRender.deleteNode();
+            }}
+          >
+            <IconDeleteStroked />
+          </DeleteIcon>
+        )}
         {/**
          * PlaygroundEntityContext is used to allow forms and variables to correctly identify which node they currently belong to
          * PlaygroundEntityContext 用于让表单和变量能正确识别当前属于哪个节点
