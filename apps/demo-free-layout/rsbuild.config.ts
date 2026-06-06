@@ -10,54 +10,93 @@ import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginLess } from '@rsbuild/plugin-less';
 import { defineConfig } from '@rsbuild/core';
 
-const localEnvDir = fileURLToPath(new URL('.', import.meta.url));
 const demoLLMEnvKeys = [
   'FLOWGRAM_DEMO_LLM_MODEL_NAME',
   'FLOWGRAM_DEMO_LLM_API_KEY',
   'FLOWGRAM_DEMO_LLM_API_HOST',
 ] as const;
+type ProcessWithEnvFileLoader = typeof process & {
+  loadEnvFile?: (path: string) => void;
+};
 
-function readLocalEnvFile(fileName: string): void {
-  const envPath = `${localEnvDir}${fileName}`;
+function loadLocalEnvFile(fileName: string): void {
+  const envPath = fileURLToPath(new URL(fileName, import.meta.url));
   if (!existsSync(envPath)) {
     return;
   }
 
-  const envText = readFileSync(envPath, 'utf8');
-  envText.split(/\r?\n/).forEach((line) => {
-    const trimmedLine = line.trim();
-    if (!trimmedLine || trimmedLine.startsWith('#')) {
-      return;
-    }
+  const loadEnvFile = (process as ProcessWithEnvFileLoader).loadEnvFile;
+  if (loadEnvFile) {
+    loadEnvFile(envPath);
+    return;
+  }
 
-    const separatorIndex = trimmedLine.indexOf('=');
-    if (separatorIndex === -1) {
-      return;
-    }
+  readFileSync(envPath, 'utf8')
+    .split(/\r?\n/)
+    .forEach((line) => {
+      const parsedEnv = parseEnvLine(line);
+      if (!parsedEnv || process.env[parsedEnv.key] !== undefined) {
+        return;
+      }
 
-    const key = trimmedLine.slice(0, separatorIndex).trim();
-    if (process.env[key] !== undefined) {
-      return;
-    }
+      process.env[parsedEnv.key] = parsedEnv.value;
+    });
+}
 
-    const rawValue = trimmedLine.slice(separatorIndex + 1).trim();
-    process.env[key] = stripEnvValueQuotes(rawValue);
+function parseEnvLine(line: string): { key: string; value: string } | undefined {
+  const trimmedLine = line.trim();
+  if (!trimmedLine || trimmedLine.startsWith('#')) {
+    return;
+  }
+
+  const normalizedLine = trimmedLine.startsWith('export ')
+    ? trimmedLine.slice('export '.length).trimStart()
+    : trimmedLine;
+  const separatorIndex = normalizedLine.indexOf('=');
+  if (separatorIndex === -1) {
+    return;
+  }
+
+  const key = normalizedLine.slice(0, separatorIndex).trim();
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
+    return;
+  }
+
+  return {
+    key,
+    value: parseEnvValue(normalizedLine.slice(separatorIndex + 1).trim()),
+  };
+}
+
+function parseEnvValue(rawValue: string): string {
+  const quote = rawValue[0];
+  if ((quote !== '"' && quote !== "'") || rawValue[rawValue.length - 1] !== quote) {
+    return rawValue;
+  }
+
+  const value = rawValue.slice(1, -1);
+  if (quote === "'") {
+    return value;
+  }
+
+  return value.replace(/\\([nrt"\\])/g, (_, escapedChar: string) => {
+    switch (escapedChar) {
+      case 'n':
+        return '\n';
+      case 'r':
+        return '\r';
+      case 't':
+        return '\t';
+      default:
+        return escapedChar;
+    }
   });
 }
 
-function stripEnvValueQuotes(rawValue: string): string {
-  const isDoubleQuoted = rawValue.startsWith('"') && rawValue.endsWith('"');
-  const isSingleQuoted = rawValue.startsWith("'") && rawValue.endsWith("'");
-  if (isDoubleQuoted || isSingleQuoted) {
-    return rawValue.slice(1, -1);
-  }
-  return rawValue;
-}
-
 if (process.env.NODE_ENV) {
-  readLocalEnvFile(`.env.${process.env.NODE_ENV}.local`);
+  loadLocalEnvFile(`.env.${process.env.NODE_ENV}.local`);
 }
-readLocalEnvFile('.env.local');
+loadLocalEnvFile('.env.local');
 
 export default defineConfig({
   plugins: [pluginReact(), pluginLess()],
