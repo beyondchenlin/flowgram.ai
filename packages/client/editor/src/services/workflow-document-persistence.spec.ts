@@ -209,4 +209,101 @@ describe('workflow document persistence', () => {
 
     expect(storage.getData('demo.document')).toEqual({ nodes: [{ id: 'legacy' }] });
   });
+
+  it('prefers a newer legacy workflow document index during prefix migration', () => {
+    const currentIndex = {
+      schemaVersion: 1,
+      activeDocumentId: 'default',
+      records: [
+        {
+          id: 'default',
+          title: 'Default Canvas',
+          storageKey: 'demo.document.default',
+          createdAt: '2026-06-01T06:00:00.000Z',
+          updatedAt: '2026-06-01T06:00:00.000Z',
+        },
+      ],
+    };
+    const legacyIndex = {
+      schemaVersion: 1,
+      activeDocumentId: 'doc-created',
+      records: [
+        ...currentIndex.records,
+        {
+          id: 'doc-created',
+          title: 'Canvas 2',
+          storageKey: 'demo.document.doc-created',
+          createdAt: '2026-06-06T06:00:00.000Z',
+          updatedAt: '2026-06-06T06:00:00.000Z',
+        },
+      ],
+    };
+    window.localStorage.setItem('flowgram:demo.documents.index', JSON.stringify(currentIndex));
+    window.localStorage.setItem('__gedit:demo.documents.index', JSON.stringify(legacyIndex));
+
+    const storage = createBrowserStorageAdapter();
+
+    expect(storage.getData('demo.documents.index')).toEqual(legacyIndex);
+  });
+
+  it('does not timestamp-sort arbitrary browser storage values that only look records-like', () => {
+    const currentValue = {
+      records: [{ updatedAt: '2026-06-01T06:00:00.000Z' }],
+      payload: 'current',
+    };
+    const legacyValue = {
+      records: [{ updatedAt: '2026-06-06T06:00:00.000Z' }],
+      payload: 'legacy',
+    };
+    window.localStorage.setItem('flowgram:demo.records', JSON.stringify(currentValue));
+    window.localStorage.setItem('__gedit:demo.records', JSON.stringify(legacyValue));
+
+    const storage = createBrowserStorageAdapter();
+
+    expect(storage.getData('demo.records')).toEqual(currentValue);
+  });
+
+  it('prefers a newer legacy workflow snapshot during prefix migration', () => {
+    const currentSnapshot = {
+      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+      updatedAt: '2026-06-01T06:00:00.000Z',
+      data: { nodes: [{ id: 'default' }] },
+    };
+    const legacySnapshot = {
+      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+      updatedAt: '2026-06-06T06:00:00.000Z',
+      data: { nodes: [{ id: 'created' }] },
+    };
+    window.localStorage.setItem(
+      'flowgram:demo.document.doc-created',
+      JSON.stringify(currentSnapshot)
+    );
+    window.localStorage.setItem(
+      '__gedit:demo.document.doc-created',
+      JSON.stringify(legacySnapshot)
+    );
+
+    const storage = createBrowserStorageAdapter();
+
+    expect(storage.getData('demo.document.doc-created')).toEqual(legacySnapshot);
+  });
+
+  it('keeps the current workflow snapshot when it is newer than legacy data', () => {
+    const currentSnapshot = {
+      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+      updatedAt: '2026-06-06T06:00:00.000Z',
+      data: { nodes: [{ id: 'current' }] },
+    };
+    const legacySnapshot = {
+      schemaVersion: WORKFLOW_DOCUMENT_SAVE_SCHEMA_VERSION,
+      updatedAt: '2026-06-01T06:00:00.000Z',
+      data: { nodes: [{ id: 'legacy' }] },
+    };
+    window.localStorage.setItem('flowgram:demo.document', JSON.stringify(currentSnapshot));
+    window.localStorage.setItem('__gedit:demo.document', JSON.stringify(legacySnapshot));
+
+    const storage = createBrowserStorageAdapter();
+
+    expect(storage.getData('demo.document')).toEqual(currentSnapshot);
+  });
 });

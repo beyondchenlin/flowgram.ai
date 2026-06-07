@@ -139,15 +139,129 @@ export function createBrowserStorageAdapter(
       window.localStorage.setItem(`${prefix}${key}`, JSON.stringify(data));
     },
     getData<T>(key: string, defaultValue?: T): T {
-      const rawData = readPrefixes
-        .map((readPrefix) => window.localStorage.getItem(`${readPrefix}${key}`))
-        .find((item): item is string => item !== null);
-      if (rawData === undefined) {
+      const candidates = readPrefixes
+        .map((readPrefix) =>
+          parseBrowserStorageCandidate(window.localStorage.getItem(`${readPrefix}${key}`))
+        )
+        .filter((item): item is BrowserStorageCandidate => item !== undefined);
+      const candidate = selectBrowserStorageCandidate(candidates);
+      if (!candidate) {
         return defaultValue as T;
       }
-      return JSON.parse(rawData) as T;
+      return candidate.data as T;
     },
   };
+}
+
+interface BrowserStorageCandidate {
+  data: unknown;
+  updatedAt?: number;
+}
+
+interface BrowserStorageWorkflowDocumentIndex {
+  schemaVersion: number;
+  activeDocumentId: string;
+  records: BrowserStorageWorkflowDocumentRecord[];
+}
+
+interface BrowserStorageWorkflowDocumentRecord {
+  id: string;
+  title: string;
+  storageKey: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function parseBrowserStorageCandidate(rawData: string | null): BrowserStorageCandidate | undefined {
+  if (rawData === null) {
+    return;
+  }
+
+  try {
+    const data = JSON.parse(rawData) as unknown;
+    return {
+      data,
+      updatedAt: getBrowserStorageUpdatedAt(data),
+    };
+  } catch {
+    return;
+  }
+}
+
+function selectBrowserStorageCandidate(
+  candidates: BrowserStorageCandidate[]
+): BrowserStorageCandidate | undefined {
+  if (candidates.length === 0) {
+    return;
+  }
+
+  const timestampedCandidates = candidates.filter((candidate) => candidate.updatedAt !== undefined);
+  if (timestampedCandidates.length < 2) {
+    return candidates[0];
+  }
+
+  return timestampedCandidates.reduce((latest, candidate) =>
+    (candidate.updatedAt ?? 0) > (latest.updatedAt ?? 0) ? candidate : latest
+  );
+}
+
+function getBrowserStorageUpdatedAt(data: unknown): number | undefined {
+  if (isWorkflowDocumentSaveSnapshot(data)) {
+    return parseUpdatedAt(data.updatedAt);
+  }
+
+  if (!isBrowserStorageWorkflowDocumentIndex(data)) {
+    return;
+  }
+
+  const recordUpdatedTimes = data.records
+    .map((record) => parseUpdatedAt(record.updatedAt))
+    .filter((updatedAt): updatedAt is number => updatedAt !== undefined);
+
+  if (recordUpdatedTimes.length === 0) {
+    return;
+  }
+
+  return Math.max(...recordUpdatedTimes);
+}
+
+function isBrowserStorageWorkflowDocumentIndex(
+  candidate: unknown
+): candidate is BrowserStorageWorkflowDocumentIndex {
+  if (!candidate || typeof candidate !== 'object') {
+    return false;
+  }
+
+  const index = candidate as Partial<BrowserStorageWorkflowDocumentIndex>;
+  return (
+    typeof index.schemaVersion === 'number' &&
+    typeof index.activeDocumentId === 'string' &&
+    Array.isArray(index.records) &&
+    index.records.length > 0 &&
+    index.records.every(isBrowserStorageWorkflowDocumentRecord)
+  );
+}
+
+function isBrowserStorageWorkflowDocumentRecord(
+  candidate: unknown
+): candidate is BrowserStorageWorkflowDocumentRecord {
+  if (!candidate || typeof candidate !== 'object') {
+    return false;
+  }
+
+  const record = candidate as Partial<BrowserStorageWorkflowDocumentRecord>;
+  return (
+    typeof record.id === 'string' &&
+    typeof record.title === 'string' &&
+    typeof record.storageKey === 'string' &&
+    typeof record.createdAt === 'string' &&
+    typeof record.updatedAt === 'string'
+  );
+}
+
+function parseUpdatedAt(updatedAt: string): number | undefined {
+  const time = Date.parse(updatedAt);
+  return Number.isFinite(time) ? time : undefined;
 }
 
 function isWorkflowDocumentSaveSnapshot<T>(

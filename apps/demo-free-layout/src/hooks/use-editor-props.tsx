@@ -16,7 +16,6 @@ import {
   FreeLayoutPluginContext,
   FreeLayoutProps,
   WorkflowNodeEntity,
-  createBrowserStorageAdapter,
   ensureWorkflowDocumentStore,
 } from '@flowgram.ai/free-layout-editor';
 import { createFreeGroupPlugin } from '@flowgram.ai/free-group-plugin';
@@ -30,6 +29,8 @@ import { shortcuts } from '../shortcuts';
 import {
   CustomService,
   ValidateService,
+  bindDemoWorkflowDocumentStorage,
+  createDemoWorkflowDocumentStorage,
   createDemoWorkflowDocumentManagerOptions,
 } from '../services';
 import { WorkflowRuntimeService } from '../plugins/runtime-plugin/runtime-service';
@@ -50,14 +51,15 @@ export function useEditorProps(
   initialData: FlowDocumentJSON,
   nodeRegistries: FlowNodeRegistry[]
 ): FreeLayoutProps {
+  const documentStorage = useMemo(() => createDemoWorkflowDocumentStorage(), []);
   const persistedInitialData = useMemo(
     () =>
       applyDemoLLMConfig(
         ensureWorkflowDocumentStore(
-          createDemoWorkflowDocumentManagerOptions(createBrowserStorageAdapter(), initialData)
+          createDemoWorkflowDocumentManagerOptions(documentStorage, initialData)
         ).activeData
       ),
-    [initialData]
+    [documentStorage, initialData]
   );
 
   return useMemo<FreeLayoutProps>(() => {
@@ -265,7 +267,9 @@ export function useEditorProps(
       /**
        * Bind custom service
        */
-      onBind: ({ bind }) => {
+      onBind: (bindConfig) => {
+        const { bind } = bindConfig;
+        bindDemoWorkflowDocumentStorage(bindConfig, documentStorage);
         bind(CustomService).toSelf().inSingletonScope();
         bind(ValidateService).toSelf().inSingletonScope();
       },
@@ -434,7 +438,7 @@ export function useEditorProps(
         createPanelManagerPlugin(),
       ],
     };
-  }, [persistedInitialData, nodeRegistries]);
+  }, [documentStorage, persistedInitialData, nodeRegistries]);
 }
 
 function saveDocumentDraftImmediately(ctx: FreeLayoutPluginContext): void {

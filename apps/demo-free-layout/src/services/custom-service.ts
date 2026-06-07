@@ -11,11 +11,13 @@ import {
   WorkflowDocument,
   StorageService,
   activateWorkflowDocument,
+  createBrowserStorageAdapter,
   createWorkflowDocument,
   ensureWorkflowDocumentStore,
   getWorkflowDocumentRecords,
   saveWorkflowDocumentData,
   saveWorkflowDocument,
+  type PluginBindConfig,
   type SaveWorkflowDocumentOptions,
   type WorkflowDocumentManagerOptions,
   type WorkflowDocumentPersistenceStorage,
@@ -28,14 +30,37 @@ import { type FlowDocumentJSON } from '../typings';
 import { GetGlobalVariableSchema, SetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
 import { applyDemoLLMConfig } from '../nodes/llm/defaults';
 import { t } from '../i18n';
+import {
+  DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_ID,
+  DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_TITLE,
+  DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY,
+  DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+  DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY_PREFIX,
+} from './document-storage-constants';
 import { DocumentOperationQueue } from './document-operation-queue';
 
-export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY = 'flowgram.demo.free-layout.document';
-export const DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY =
-  'flowgram.demo.free-layout.documents.index';
-export const DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY_PREFIX = 'flowgram.demo.free-layout.document.';
-export const DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_ID = 'default';
-export const DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_TITLE = 'Default Canvas';
+export {
+  DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_ID,
+  DEMO_FREE_LAYOUT_DEFAULT_DOCUMENT_TITLE,
+  DEMO_FREE_LAYOUT_DOCUMENT_INDEX_STORAGE_KEY,
+  DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY,
+  DEMO_FREE_LAYOUT_DOCUMENT_STORAGE_KEY_PREFIX,
+} from './document-storage-constants';
+
+export function createDemoWorkflowDocumentStorage(): WorkflowDocumentPersistenceStorage {
+  return createBrowserStorageAdapter();
+}
+
+export function bindDemoWorkflowDocumentStorage(
+  bindConfig: Pick<PluginBindConfig, 'bind' | 'isBound' | 'rebind'>,
+  storage: WorkflowDocumentPersistenceStorage
+): void {
+  if (bindConfig.isBound(StorageService)) {
+    bindConfig.rebind(StorageService).toConstantValue(storage);
+  } else {
+    bindConfig.bind(StorageService).toConstantValue(storage);
+  }
+}
 
 export function createDemoWorkflowDocumentManagerOptions(
   storage: WorkflowDocumentPersistenceStorage,
